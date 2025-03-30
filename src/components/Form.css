@@ -1,0 +1,39 @@
+.form-container {
+	.success-message {
+		color: #28a745;
+		font-size: 12px;
+		margin-top: -10px;
+		margin-bottom: 10px;
+	}
+	.form-group {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 20px;
+	}
+	.form-group-inline {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+	}
+	.form-checkbox {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		input {
+			width: auto;
+			margin: 0;
+		}
+	}
+	.form-helper-text {
+		font-size: 12px;
+		color: #6c757d;
+		margin-top: -5px;
+	}
+	.form-divider {
+		height: 1px;
+		background-color: #ddd;
+		margin: 20px 0;
+	}
+}
