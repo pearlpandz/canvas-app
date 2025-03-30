@@ -1,130 +1,194 @@
-import { useState } from "react";
-import './Form.css';
+import React, { useEffect, useState } from "react";
 
-export default function Form(props) {
-    const { setCompanyDetails, companyDetails } = props;
-    const [formData, setFormData] = useState(companyDetails || {
-        logo: "", // Logo URL
-        companyName: "",
-        mobileNumber1: "",
-        mobileNumber2: "",
-        email: "",
-        website: "",
-        description: ""
-    });
+// Third party Components
+import { useForm } from "react-hook-form";
 
-    // Handle File Uploads
-    const handleImageUpload = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => setFormData((prev) => ({ ...prev, logo: e.target.result }));
-            reader.readAsDataURL(file);
-        }
-    };
+//Styles
+import "./Form.css";
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
+const Form = (props) => {
+  const { setCompanyDetails, companyDetails } = props;
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        localStorage.setItem("companyDetails", JSON.stringify(formData));
-        setCompanyDetails(formData);
-    };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setValue,
+    trigger,
+  } = useForm({
+    mode: "onChange",
+  });
 
-    return (
-        <form onSubmit={handleSubmit} className="form-container">
-            <div className="form-group">
-                <label htmlFor="logoUpload" className="form-label">Upload Logo:</label>
-                <input
-                    id="logoUpload"
-                    type="file"
-                    onChange={handleImageUpload}
-                    className="form-input"
-                />
-            </div>
+  const [preview, setPreview] = useState(null);
 
-            <div className="form-group">
-                <label htmlFor="companyName" className="form-label">Company Name:</label>
-                <input
-                    id="companyName"
-                    name="companyName"
-                    type="text"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                    placeholder="Enter Company Name"
-                    className="form-input"
-                />
-            </div>
+  /* To show the data in form if user comes back to form after submit 
+   Just added this not sure if required */
+  useEffect(() => {
+    if (companyDetails && Object.keys(companyDetails).length > 0) {
+      setValue("companyName", companyDetails.companyName || "");
+      setValue("mobileNumber", companyDetails.mobileNumber || "");
+      setValue(
+        "alternateMobileNumber",
+        companyDetails.alternateMobileNumber || ""
+      );
+      setValue("email", companyDetails.email || "");
+      setValue("website", companyDetails.website || "");
+      setValue("description", companyDetails.description || "");
+      setValue("image", companyDetails.image || "");
+      setPreview(companyDetails.image || null);
+      trigger();
+    }
+  }, [companyDetails, setValue, trigger]);
 
-            <div className="form-group">
-                <label htmlFor="mobileNumber1" className="form-label">Mobile Number:</label>
-                <input
-                    id="mobileNumber1"
-                    name="mobileNumber1"
-                    type="text"
-                    value={formData.mobileNumber1}
-                    onChange={handleChange}
-                    placeholder="Enter Contact Details"
-                    className="form-input"
-                />
-            </div>
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-            <div className="form-group">
-                <label htmlFor="mobileNumber2" className="form-label">Alternate Mobile Number (Optional):</label>
-                <input
-                    id="mobileNumber2"
-                    name="mobileNumber2"
-                    type="text"
-                    value={formData.mobileNumber2}
-                    onChange={handleChange}
-                    placeholder="Enter Contact Details"
-                    className="form-input"
-                />
-            </div>
+  const onSubmit = (data) => {
+    data.image = preview;
+    localStorage.setItem("companyDetails", JSON.stringify(data));
+    setCompanyDetails(data);
+  };
 
-            <div className="form-group">
-                <label htmlFor="email" className="form-label">Email Address:</label>
-                <input
-                    id="email"
-                    name="email"
-                    type="text"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter Contact Details"
-                    className="form-input"
-                />
-            </div>
+  return (
+    <div className="form-container">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="form-group">
+          <label>Upload Image</label>
+          <div className="image-group">
+            <input
+              type="file"
+              accept="image/*"
+              {...register("image")}
+              onChange={handleImageChange}
+            />
+            {preview && (
+              <img src={preview} alt="Preview" className="image-preview" />
+            )}
+          </div>
+          {errors.image && (
+            <span className="error">{errors.image.message}</span>
+          )}
+        </div>
 
-            <div className="form-group">
-                <label htmlFor="website" className="form-label">Website:</label>
-                <input
-                    id="website"
-                    name="website"
-                    type="text"
-                    value={formData.website}
-                    onChange={handleChange}
-                    placeholder="Enter Contact Details"
-                    className="form-input"
-                />
-            </div>
+        <div className="form-group">
+          <label>Company Name *</label>
+          <input
+            type="text"
+            placeholder="Enter Company Name"
+            {...register("companyName", {
+              required: "Company Name is required",
+              pattern: {
+                value: /^[A-Za-z\s]+$/,
+                message: "Only alphabets are allowed",
+              },
+            })}
+          />
+          {errors.companyName && (
+            <span className="error">{errors.companyName.message}</span>
+          )}
+        </div>
 
-            <div className="form-group">
-                <label htmlFor="description" className="form-label">Description:</label>
-                <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Enter Description"
-                    className="form-input"
-                    rows={4}
-                />
-            </div>
+        <div className="form-group">
+          <label>Mobile Number *</label>
+          <input
+            type="text"
+            placeholder="Enter Mobile Number"
+            {...register("mobileNumber", {
+              required: "Mobile Number is required",
+              pattern: {
+                value: /^[6-9]\d{9}$/,
+                message: "Enter a valid 10-digit mobile number",
+              },
+            })}
+          />
+          {errors.mobileNumber && (
+            <span className="error">{errors.mobileNumber.message}</span>
+          )}
+        </div>
 
-            <button type="submit" className="form-button">Submit</button>
-        </form>
-    );
-}
+        <div className="form-group">
+          <label>Alternate Mobile Number</label>
+          <input
+            type="text"
+            placeholder="Enter Alternate Mobile Number"
+            {...register("alternateMobileNumber", {
+              pattern: {
+                value: /^[6-9]\d{9}$/,
+                message: "Enter a valid 10-digit mobile number",
+              },
+            })}
+          />
+          {errors.alternateMobileNumber && (
+            <span className="error">
+              {errors.alternateMobileNumber.message}
+            </span>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label>Email Address *</label>
+          <input
+            type="email"
+            placeholder="Enter Email Address"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Enter a valid email address",
+              },
+            })}
+          />
+          {errors.email && (
+            <span className="error">{errors.email.message}</span>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label>Website *</label>
+          <input
+            type="url"
+            placeholder="Enter Website URL"
+            {...register("website", {
+              required: "Website is required",
+              pattern: {
+                value:
+                  /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
+                message: "Enter a valid URL",
+              },
+            })}
+          />
+          {errors.website && (
+            <span className="error">{errors.website.message}</span>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label>Description *</label>
+          <textarea
+            placeholder="Enter Description"
+            {...register("description", {
+              required: "Description is required",
+            })}
+          ></textarea>
+          {errors.description && (
+            <span className="error">{errors.description.message}</span>
+          )}
+        </div>
+
+        <button type="submit" disabled={!isValid}>
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default Form;
