@@ -1,41 +1,59 @@
-import { Stage, Layer, Text, Image } from "react-konva";
+import { Stage, Layer, Text, Image, Group } from "react-konva";
 import { useEffect, useState } from "react";
-import useImage from "use-image";
-
-export const CanvasImage = ({ src, x, y, width, height }) => {
-    const [image] = useImage(src);
-    return <Image image={image} x={x} y={y} width={width} height={height} />;
-  };
+import CanvasText from "./CanvasText";
+import CanvasRectangleWithText from "./CanvasRectangleWithText";
+import CanvasRectangle from "./CanvasRectangle";
+import CanvasCircle from "./CanvasCircle";
+import CanvasImage from "./CanvasImage";
 
 const CanvasRenderer = ({ templateId, businessDetails }) => {
   const [elements, setElements] = useState([]);
 
   useEffect(() => {
-    fetch(`/api/get-template/${templateId}`)
-      .then(res => res.json())
-      .then(data => {
-        const updatedElements = data.elements.map(el => ({
-          ...el,
-          content: el.content?.replace("{{business_name}}", businessDetails.name)
-                               .replace("{{phone}}", businessDetails.phone)
-        }));
-        setElements(updatedElements);
-      });
+    // fetch(`/api/get-template/${templateId}`)
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     const updatedElements = data.elements.map(el => ({
+    //       ...el,
+    //       content: el.content?.replace("{{business_name}}", businessDetails.name)
+    //                            .replace("{{phone}}", businessDetails.phone)
+    //     }));
+    //     setElements(updatedElements);
+    //   });
+
+    const data = JSON.parse(localStorage.getItem('template'))
+    const updatedElements = data.elements.map(el => ({
+      ...el,
+      content: el.content?.replace("{{business_name}}", businessDetails.name)
+                            .replace("{{phone}}", businessDetails.phone)
+    }));
+    console.log('updatedElements', updatedElements)
+    setElements(updatedElements);
   }, [templateId, businessDetails]);
 
   return (
-    <Stage width={500} height={300} style={{ border: "1px solid black" }}>
-      <Layer>
-        {elements.map(el => {
-          if (el.type === "image") {
-            return <CanvasImage key={el.id} src={el.src} x={el.x} y={el.y} width={el.width} height={el.height} />;
-          } else if (el.type === "text") {
-            return <Text key={el.id} text={el.content} x={el.x} y={el.y} fontSize={el.fontSize} fill={el.color} />;
-          }
-          return null;
-        })}
-      </Layer>
-    </Stage>
+    <Stage
+          width={600}
+          height={600}
+        >
+          <Layer>
+            {elements.map(el => {
+              if (el.type === "image") {
+                console.log(el)
+                return <CanvasImage key={el.id} element={el} />;
+              } else if (el.type === "text") {
+                return <CanvasText key={el.id} element={el} />;
+              } else if (el.type === "text-box") {
+                return <CanvasRectangleWithText key={el.id} element={el} />;
+              } else if (el.type === "rectangle") {
+                return <CanvasRectangle key={el.id} element={el} />;
+              } else if (el.type === "circle") {
+                return <CanvasCircle key={el.id} element={el} />;
+              }
+              return null;
+            })}
+          </Layer>
+        </Stage>
   );
 };
 

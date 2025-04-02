@@ -1,13 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
+import HomePage from './pages/Home';
+import PreviewPage from './pages/Preview';
 import './App.css'
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route index element={<Home />} />
+                <Route index element={<HomePage />} />
+                <Route path='preview' element={<PreviewPage />} />
             </Routes>
         </Router>
     );
