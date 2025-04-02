@@ -29,7 +29,6 @@ Demo-2
     Regular (2) - take it from ref site
     Product (2) - take it from ref site
     Political (2) - take it from ref site
-    ....other frames (future)
     user can select theme color, that will apply in the frame
 
 Demo-3 
@@ -41,6 +40,7 @@ Demo-3
 Demo 4
     user signup
     signin
+    prepare documentation to load new frames into the site by admin (But need css developer help to load the css)
 
 
 Demo nth
@@ -65,3 +65,9 @@ Stacks
 > Database (PostgreSQL)
 > Github (Private repostory)
 > 
+
+
+
+
+npm install konva react-konva
+npm install use-image

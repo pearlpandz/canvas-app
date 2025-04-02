@@ -1,28 +1,15 @@
 
-import React, { useState } from "react";
-import List from "../components/List";
-import Modal from "../components/Modal";
-import Editor from "../components/Editor";
+import React from "react";
+import CanvasEditor from "../components/CanvasEditor";
 
-const CanvasRenderer = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [selectedImg, setSelectedImg] = useState(null);
-
-    const handleSelectedImg = (img) => {
-        setSelectedImg(img);
-        setShowModal(true);
-    }
+const HomePage = () => {
 
     return (
-        <div style={{padding: 20}}>
-            <List setSelectedImg={handleSelectedImg} />
-
-            <Modal show={showModal} onClose={() => setShowModal(false)}>
-                <Editor selectedImg={selectedImg}/>
-            </Modal>
-
+        <div style={{ padding: 20 }}>
+            <h1>test</h1>
+            <CanvasEditor />
         </div>
     );
 };
 
-export default CanvasRenderer;
+export default HomePage;
