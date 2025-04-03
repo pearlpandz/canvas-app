@@ -45,7 +45,7 @@ const CanvasRectangleWithText = ({ element, isSelected, onSelect, onChange, isEd
     <Group
       x={element.x}
       y={element.y}
-      draggable
+      draggable={isEditable}
       onClick={isEditable ? onSelect : null}
       onTap={isEditable ? onSelect : null}
       onDragEnd={isEditable ? handleDragEnd : null}
