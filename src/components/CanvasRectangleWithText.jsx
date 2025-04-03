@@ -46,9 +46,9 @@ const CanvasRectangleWithText = ({ element, isSelected, onSelect, onChange, isEd
       x={element.x}
       y={element.y}
       draggable
-      onClick={onSelect}
-      onTap={onSelect}
-      onDragEnd={handleDragEnd}
+      onClick={isEditable ? onSelect : null}
+      onTap={isEditable ? onSelect : null}
+      onDragEnd={isEditable ? handleDragEnd : null}
     >
       {/* Rectangle */}
       <Rect
@@ -76,6 +76,9 @@ const CanvasRectangleWithText = ({ element, isSelected, onSelect, onChange, isEd
       ) : (
         <Text
           // x={(shapeRef.current?.width() - textRef.current?.width() + shapeRef.current?.x()) / 2}
+          x={shapeRef.current && textRef.current
+            ? shapeRef.current.x() + shapeRef.current.width() - textRef.current.width()
+            : 0}
           y={shapeRef.current && textRef.current
             ? shapeRef.current.y() + shapeRef.current.height() - textRef.current.height()
             : 0}

@@ -25,6 +25,10 @@ const CanvasRectangle = ({ element, isSelected, onSelect, onChange, isEditable =
         height: newHeight,
       });
     }
+
+    const handleDragEnd = (e) => {
+      onChange({ ...element, x: e.target.x(), y: e.target.y() });
+    }
   
     return (
       <>
@@ -36,7 +40,8 @@ const CanvasRectangle = ({ element, isSelected, onSelect, onChange, isEditable =
           height={element.height}
           fill={element.color}
           draggable={isEditable}
-          opacity={element.opacity}
+          onDragEnd={isEditable ? handleDragEnd : null}
+          opacity={element.opacity/100}
           onClick={isEditable ? onSelect : null}
           onTap={isEditable ? onSelect : null}
           onTransformEnd={isEditable ? handleTransformEnd : null}

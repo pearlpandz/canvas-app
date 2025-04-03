@@ -4,6 +4,10 @@ const CanvasElementForm = ({ element, onChange }) => {
     onChange({ ...element, [field]: value });
   };
 
+  if(!element) {
+    return null;
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
       <label>
@@ -13,6 +17,24 @@ const CanvasElementForm = ({ element, onChange }) => {
           value={element.fontSize}
           min="12"
           onChange={(e) => updateValue("fontSize", parseInt(e.target.value))}
+        />
+      </label>
+
+      <label>
+        X-Axis:
+        <input
+          type="number"
+          value={element.x}
+          onChange={(e) => updateValue("x", parseInt(e.target.value))}
+        />
+      </label>
+
+      <label>
+        Y-Axis:
+        <input
+          type="number"
+          value={element.y}
+          onChange={(e) => updateValue("y", parseInt(e.target.value))}
         />
       </label>
 
@@ -43,7 +65,14 @@ const CanvasElementForm = ({ element, onChange }) => {
         />
       </label>
 
-      
+      <label>
+        Opacity:
+        <input
+          type="number"
+          value={element.opacity}
+          onChange={(e) => updateValue("opacity", parseInt(e.target.value))}
+        />
+      </label>
 
       <label>
         Background Color:

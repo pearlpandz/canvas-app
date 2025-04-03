@@ -16,13 +16,21 @@ const CanvasClippedImage = ({ element, isSelected, onSelect, onChange, isEditabl
         })
     }
 
-    const handleTransformEnd = () => {
+    const handleTransformEnd = (e) => {
         const node = shapeRef.current;
+
+        const node1 = e.target;
+        const newWidth = node1.width() * node1.scaleX();
+        const newHeight = node1.height() * node1.scaleY();
+
+        // Reset scale to avoid accumulation
+        node.scaleX(1);
+        node.scaleY(1);
+
         onChange({
-            x: node.x(),
-            y: node.y(),
-            width: node.width() * node.scaleX(),
-            height: node.height() * node.scaleY(),
+            ...element,
+            width: newWidth,
+            height: newHeight,
             scaleX: 1,
             scaleY: 1,
         });
@@ -34,6 +42,8 @@ const CanvasClippedImage = ({ element, isSelected, onSelect, onChange, isEditabl
                 ref={shapeRef}
                 x={element.x}
                 y={element.y}
+                width={element.width}
+                height={element.height}
                 clipFunc={(ctx) => clipShape(ctx, element)}
                 onClick={isEditable ? onSelect : null}
                 onTap={isEditable ? onSelect : null}
@@ -50,7 +60,7 @@ const CanvasClippedImage = ({ element, isSelected, onSelect, onChange, isEditabl
 
 // Clip Shape Function
 const clipShape = (ctx, element) => {
-    const { width, height, radius} = element;
+    const { width, height, radius } = element;
 
     ctx.beginPath();
 

@@ -16,11 +16,21 @@ const CanvasEditor = ({ templateId }) => {
   const stageRef = useRef();
 
   useEffect(() => {
-    // This is for later use
-    fetch(`/api/templates/${templateId}`)
-      .then(res => res.json())
-      .then(data => setElements(data.elements));
-  }, [setElements, templateId]);
+    // fetch(`/api/templates/${templateId}`)
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     const updatedElements = data.elements.map(el => ({
+    //       ...el,
+    //       content: el.content?.replace("{{business_name}}", businessDetails.name)
+    //                            .replace("{{phone}}", businessDetails.phone)
+    //     }));
+    //     setElements(updatedElements);
+    //   });
+
+    const data = JSON.parse(localStorage.getItem('template'))
+    const updatedElements = data?.elements ?? [];
+    setElements(updatedElements);
+  }, [templateId]);
 
   const handleSelect = (id) => setSelectedId(id);
 
@@ -116,7 +126,7 @@ const CanvasEditor = ({ templateId }) => {
         width: 100,
         height: 100,
         color: "#444",
-        opacity: 0.5,
+        opacity: 50,
         slug: "{{rect}}"
       }
     ]);
@@ -132,7 +142,7 @@ const CanvasEditor = ({ templateId }) => {
         y: 200,
         radius: 50,
         color: "#444",
-        opacity: 0.5,
+        opacity: 50,
         slug: "{{circle}}"
       }
     ]);
