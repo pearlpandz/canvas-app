@@ -7,6 +7,7 @@ import CanvasRectangleWithText from "./CanvasRectangleWithText";
 import CanvasRectangle from "./CanvasRectangle";
 import CanvasCircle from "./CanvasCircle";
 import CanvasElementForm from "./CanvasElementForm";
+import CanvasClippedImage from "./CanvasClippedImage";
 
 // Canvas Editor
 const CanvasEditor = ({ templateId }) => {
@@ -137,6 +138,24 @@ const CanvasEditor = ({ templateId }) => {
     ]);
   };
 
+  const addClipImage = () => {
+    setElements([
+      ...elements,
+      {
+        id: `image-${Date.now()}`,
+        x: 100,
+        y: 100,
+        width: 200,
+        height: 200,
+        src: "https://beautyrepublicfdl.com/wp-content/uploads/2020/06/placeholder-image.jpg",
+        radius: 30,
+        type: 'clip-image',
+        slug: "{{clip-image}}",
+        color: '#444',
+      },
+    ]);
+  };
+
   const saveTemplate = async () => {
     localStorage.setItem('template', JSON.stringify({ name: "Updated Template", elements }))
     // await fetch(`/api/save-template`, {
@@ -145,6 +164,22 @@ const CanvasEditor = ({ templateId }) => {
     //   body: JSON.stringify({ name: "Updated Template", elements })
     // });
     alert("Template saved successfully!");
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      console.log(reader.result)
+      setElements(
+        elements.map((el) =>
+          el.id === selectedId ? { ...el, src: reader.result } : el
+        )
+      );
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -156,11 +191,17 @@ const CanvasEditor = ({ templateId }) => {
         <button onClick={addImageElement}>Add Image</button>
         <button onClick={addRectangle}>Add Rectangle</button>
         <button onClick={addCircle}>Add Circle</button>
+        <button onClick={addClipImage}>Add Rounded Image</button>
+
         <button onClick={undo}>Undo</button>
         <button onClick={redo}>Redo</button>
+
         <button onClick={saveTemplate}>Save Template</button>
+
         <button onClick={bringToFront}>Bring to Front</button>
         <button onClick={sendToBack}>Send to Back</button>
+        
+        <input type="file" onChange={handleImageChange} disabled={!selectedId} />
 
         <Stage
           ref={stageRef}
@@ -181,6 +222,8 @@ const CanvasEditor = ({ templateId }) => {
                 return <CanvasRectangle key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
               } else if (el.type === "circle") {
                 return <CanvasCircle key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+              } else if (el.type === "clip-image") {
+                return <CanvasClippedImage key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />
               }
               return null;
             })}

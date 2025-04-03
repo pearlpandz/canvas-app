@@ -5,6 +5,7 @@ import CanvasRectangleWithText from "./CanvasRectangleWithText";
 import CanvasRectangle from "./CanvasRectangle";
 import CanvasCircle from "./CanvasCircle";
 import CanvasImage from "./CanvasImage";
+import CanvasClippedImage from "./CanvasClippedImage";
 
 const CanvasRenderer = ({ templateId, businessDetails }) => {
   const [elements, setElements] = useState([]);
@@ -49,6 +50,8 @@ const CanvasRenderer = ({ templateId, businessDetails }) => {
                 return <CanvasRectangle key={el.id} element={el} isEditable={isEditable} />;
               } else if (el.type === "circle") {
                 return <CanvasCircle key={el.id} element={el} isEditable={isEditable} />;
+              } else if (el.type === "clip-image") {
+                return <CanvasClippedImage key={el.id} element={el} isEditable={isEditable} />
               }
               return null;
             })}
