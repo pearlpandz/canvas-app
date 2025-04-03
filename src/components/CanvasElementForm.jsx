@@ -17,24 +17,6 @@ const CanvasElementForm = ({ element, onChange }) => {
       </label>
 
       <label>
-        X Axis:
-        <input
-          type="number"
-          value={element.x}
-          onChange={(e) => updateValue("width", parseInt(e.target.value))}
-        />
-      </label>
-
-      <label>
-      Y Axis:
-        <input  
-          type="number"
-          value={element.y}
-          onChange={(e) => updateValue("height", parseInt(e.target.value))}
-        />
-      </label>
-
-      <label>
         Width:
         <input
           type="number"

@@ -71,3 +71,9 @@ Stacks
 
 npm install konva react-konva
 npm install use-image
+
+
+image :: clip options
+- rounded circle 
+- rounded edge
+- perfect rectangle (sharp edge)

@@ -4,7 +4,7 @@ import { Html } from "react-konva-utils";
 import TransformerComponent from "./TransformerComponent";
 
 // Text Component
-const CanvasText = ({ element, isSelected, onSelect, onChange, stageRef }) => {
+const CanvasText = ({ element, isSelected, onSelect, onChange, stageRef, isEditable = true }) => {
   const textNodeRef = useRef();
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(element.content);
@@ -50,6 +50,18 @@ const CanvasText = ({ element, isSelected, onSelect, onChange, stageRef }) => {
     setIsEditing(false);
   };
 
+  const handleTransformEnd = () => {
+    const node = textNodeRef.current;
+    onChange({
+      ...element,
+      x: node.x(),
+      y: node.y(),
+      width: node.width() * node.scaleX() > 600 ? 600 : node.width() * node.scaleX(),
+      height: node.height() * node.scaleY() > 600 ? 600 : node.height() * node.scaleY(),
+      fontSize: node.fontSize(),
+    });
+  }
+
   return (
     <>
       {isEditing ? (
@@ -75,21 +87,11 @@ const CanvasText = ({ element, isSelected, onSelect, onChange, stageRef }) => {
           height={element.height > 600 ? 600 : element.height}
           align="center"
           wrap="word"
-          draggable
-          onClick={onSelect}
-          onDblClick={handleDblClick}
-          onTap={handleDblClick} // Mobile support
-          onTransformEnd={() => {
-            const node = textNodeRef.current;
-            onChange({
-              ...element,
-              x: node.x(),
-              y: node.y(),
-              width: node.width() * node.scaleX() > 600 ? 600 : node.width() * node.scaleX(),
-              height: node.height() * node.scaleY() > 600 ? 600 : node.height() * node.scaleY(),
-              fontSize: node.fontSize(),
-            });
-          }}
+          draggable={isEditable}
+          onClick={isEditable ? onSelect : null}
+          onDblClick={isEditable ? handleDblClick : null}
+          onTap={isEditable ? handleDblClick : null} // Mobile support
+          onTransformEnd={isEditable ? handleTransformEnd : null}
         />
       )}
       <TransformerComponent shapeRef={textNodeRef} isSelected={isSelected} />
