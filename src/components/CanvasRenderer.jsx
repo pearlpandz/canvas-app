@@ -7,30 +7,18 @@ import CanvasCircle from "./CanvasCircle";
 import CanvasImage from "./CanvasImage";
 import CanvasClippedImage from "./CanvasClippedImage";
 
-const CanvasRenderer = ({ templateId, businessDetails }) => {
+const CanvasRenderer = ({ template, businessDetails }) => {
   const [elements, setElements] = useState([]);
   const isEditable = false;
 
   useEffect(() => {
-    // fetch(`/api/get-template/${templateId}`)
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     const updatedElements = data.elements.map(el => ({
-    //       ...el,
-    //       content: el.content?.replace("{{business_name}}", businessDetails.name)
-    //                            .replace("{{phone}}", businessDetails.phone)
-    //     }));
-    //     setElements(updatedElements);
-    //   });
-
-    const data = JSON.parse(localStorage.getItem('template'))
-    const updatedElements = data.elements.map(el => ({
+    const updatedElements = template?.elements?.map(el => ({
       ...el,
       content: el.content?.replace("{{business_name}}", businessDetails.name)
                             .replace("{{phone}}", businessDetails.phone)
     }));
     setElements(updatedElements);
-  }, [templateId, businessDetails]);
+  }, [template, businessDetails]);
 
   return (
     <Stage
@@ -38,7 +26,7 @@ const CanvasRenderer = ({ templateId, businessDetails }) => {
           height={600}
         >
           <Layer>
-            {elements.map(el => {
+            {elements?.map(el => {
               if (el.type === "image") {
                 console.log(el)
                 return <CanvasImage key={el.id} element={el} isEditable={isEditable}  />;

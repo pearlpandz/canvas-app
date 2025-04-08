@@ -1,5 +1,5 @@
 import { Stage, Layer } from "react-konva";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useUndoRedo } from "../hook/useUndoRedo";
 import CanvasImage from "./CanvasImage";
 import CanvasText from "./CanvasText";
@@ -10,27 +10,21 @@ import CanvasElementForm from "./CanvasElementForm";
 import CanvasClippedImage from "./CanvasClippedImage";
 
 // Canvas Editor
-const CanvasEditor = ({ templateId }) => {
+const CanvasEditor = ({ template, mode='edit' }) => {
   const [elements, setElements, undo, redo] = useUndoRedo([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [templateName, setTemplateName] = useState('');
   const stageRef = useRef();
 
   useEffect(() => {
-    // fetch(`/api/templates/${templateId}`)
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     const updatedElements = data.elements.map(el => ({
-    //       ...el,
-    //       content: el.content?.replace("{{business_name}}", businessDetails.name)
-    //                            .replace("{{phone}}", businessDetails.phone)
-    //     }));
-    //     setElements(updatedElements);
-    //   });
-
-    const data = JSON.parse(localStorage.getItem('template'))
-    const updatedElements = data?.elements ?? [];
-    setElements(updatedElements);
-  }, [templateId]);
+    // Load initial elements from template prop
+    if (template?.elements) {
+      setElements(template.elements);
+      setTemplateName(template.name);
+    } else {
+      setElements([]);
+    }
+  }, [template])
 
   const handleSelect = (id) => setSelectedId(id);
 
@@ -167,13 +161,40 @@ const CanvasEditor = ({ templateId }) => {
   };
 
   const saveTemplate = async () => {
-    localStorage.setItem('template', JSON.stringify({ name: "Updated Template", elements }))
-    // await fetch(`/api/save-template`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ name: "Updated Template", elements })
-    // });
+    const existingTemplates = JSON.parse(localStorage.getItem('templates')) || [];
+    const updatedTemplates = [
+      ...existingTemplates,
+      {
+        name: templateName,
+        templateId: existingTemplates.length + 1,
+        elements
+      }
+    ];
+    localStorage.setItem('templates', JSON.stringify(updatedTemplates));
     alert("Template saved successfully!");
+  };
+
+  const updateTemplate = async () => {
+    const existingTemplates = JSON.parse(localStorage.getItem('templates')) || [];
+    const templateIndex = existingTemplates.findIndex(t => t.templateId === template.templateId);
+    if (templateIndex === -1) {
+      alert("Template not found!");
+      return;
+    }
+    const dataURL = stageRef.current.toDataURL({
+      pixelRatio: 1 // double resolution
+    });
+    const updatedTemplates = [
+      ...existingTemplates.filter(t => t.templateId !== template.templateId),
+      {
+        ...existingTemplates[templateIndex],
+        name: templateName,
+        image: dataURL,
+        elements
+      }
+    ];
+    localStorage.setItem('templates', JSON.stringify(updatedTemplates));
+    alert("Template updated successfully!");
   };
 
   const handleImageChange = (event) => {
@@ -205,13 +226,20 @@ const CanvasEditor = ({ templateId }) => {
 
         <button onClick={undo}>Undo</button>
         <button onClick={redo}>Redo</button>
-
-        <button onClick={saveTemplate}>Save Template</button>
+        {
+          mode === 'edit' ? 
+          <button onClick={updateTemplate}>Update Template</button> :
+          <button onClick={saveTemplate}>Save Template</button>
+        }
 
         <button onClick={bringToFront}>Bring to Front</button>
         <button onClick={sendToBack}>Send to Back</button>
-        
+
+        <br />
         <input type="file" onChange={handleImageChange} disabled={!selectedId} />
+        <br />
+        <input type="text" placeholder="Your template name..." value={templateName || template?.name} onChange={(e) => setTemplateName(e.target.value)} />
+        <br />
 
         <Stage
           ref={stageRef}

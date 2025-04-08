@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CanvasRenderer from "../components/CanvasRenderer";
+import CanvasEditor from "../components/CanvasEditor";
 import { useParams } from "react-router";
 
-const PreviewPage = () => {
-    const businessDetails = JSON.parse(localStorage.getItem('companyDetails')) ?? {}
+const EditPage = () => {
     const { templateId } = useParams();
     const [template, setTemplate] = useState({});
 
@@ -16,10 +15,10 @@ const PreviewPage = () => {
 
     return (
         <div style={{ padding: 20 }}>
-            <h1>Canvas Preview :: Load existing template and bind business details</h1>
-            <CanvasRenderer template={template} businessDetails={businessDetails} />
+            <h1>Canvas Editor</h1>
+            <CanvasEditor template={template} mode='edit' />
         </div>
     );
 };
 
-export default PreviewPage;
+export default EditPage;
