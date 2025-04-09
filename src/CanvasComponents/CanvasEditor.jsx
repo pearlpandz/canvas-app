@@ -15,6 +15,7 @@ const CanvasEditor = ({ template, mode='edit' }) => {
   const [selectedId, setSelectedId] = useState(null);
   const [templateName, setTemplateName] = useState('');
   const stageRef = useRef();
+  const [templateCategory, setTemplateCategory] = useState('regular');
 
   useEffect(() => {
     // Load initial elements from template prop
@@ -162,11 +163,16 @@ const CanvasEditor = ({ template, mode='edit' }) => {
 
   const saveTemplate = async () => {
     const existingTemplates = JSON.parse(localStorage.getItem('templates')) || [];
+    const dataURL = stageRef.current.toDataURL({
+      pixelRatio: 0.5 // double resolution
+    });
+    console.log(dataURL)
     const updatedTemplates = [
       ...existingTemplates,
       {
         name: templateName,
         templateId: existingTemplates.length + 1,
+        image: dataURL,
         elements
       }
     ];
@@ -176,7 +182,7 @@ const CanvasEditor = ({ template, mode='edit' }) => {
 
   const updateTemplate = async () => {
     const existingTemplates = JSON.parse(localStorage.getItem('templates')) || [];
-    const templateIndex = existingTemplates.findIndex(t => t.templateId === template.templateId);
+    const templateIndex = existingTemplates.findIndex(t => t.templateId === template?.templateId);
     if (templateIndex === -1) {
       alert("Template not found!");
       return;
@@ -238,9 +244,17 @@ const CanvasEditor = ({ template, mode='edit' }) => {
         <br />
         <input type="file" onChange={handleImageChange} disabled={!selectedId} />
         <br />
+        <label>Template Name</label>
         <input type="text" placeholder="Your template name..." value={templateName || template?.name} onChange={(e) => setTemplateName(e.target.value)} />
         <br />
+        <label>Category</label>
+        <select name="category" id="category" value={templateCategory} onChange={(e) => setTemplateCategory(e.target.value)}>
+          <option value="regular">Regular</option>
+          <option value="product">Product</option>
+          <option value="political">Political</option>
+        </select>
 
+        <br />
         <Stage
           ref={stageRef}
           width={600}

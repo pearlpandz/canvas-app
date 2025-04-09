@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CanvasRenderer from "../components/CanvasRenderer";
+import CanvasRenderer from "../CanvasComponents/CanvasRenderer";
 import { useParams } from "react-router";
 
 const PreviewPage = () => {

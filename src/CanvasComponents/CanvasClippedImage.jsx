@@ -4,7 +4,7 @@ import useImage from "use-image";
 import TransformerComponent from "./TransformerComponent";
 
 const CanvasClippedImage = ({ element, isSelected, onSelect, onChange, isEditable = true }) => {
-    const [image] = useImage(element.src);
+    const [image] = useImage(element.src, 'anonymous');
     const shapeRef = useRef();
 
     const handleDragMove = (e) => {

@@ -6,15 +6,23 @@ import TransformerComponent from "./TransformerComponent";
 const CanvasCircle = ({ element, isSelected, onSelect, onChange, isEditable = true }) => {
   const shapeRef = useRef();
 
-  const handleTransformEnd = () => {
+  const handleTransformEnd = (e) => {
     const node = shapeRef.current;
+    
+    const node1 = e.target;
+    const newWidth = node1.width() * node1.scaleX();
+    const newHeight = node1.height() * node1.scaleY();
+
+    // Reset scale to avoid accumulation
+    node.scaleX(1);
+    node.scaleY(1);
+
     onChange({
       ...element,
       x: node.x(),
       y: node.y(),
-      radius: node.radius(),
-      scaleX: 1,
-      scaleY: 1,
+      width: newWidth,
+      height: newHeight,
     });
   }
 
@@ -28,6 +36,8 @@ const CanvasCircle = ({ element, isSelected, onSelect, onChange, isEditable = tr
         ref={shapeRef}
         x={element.x}
         y={element.y}
+        width={element.width}
+        height={element.height}
         radius={element.radius}
         opacity={element.opacity / 100}
         fill={element.color}

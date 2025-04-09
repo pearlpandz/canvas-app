@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CanvasEditor from "../components/CanvasEditor";
+import CanvasEditor from "../CanvasComponents/CanvasEditor";
 import { useParams } from "react-router";
 
 const EditPage = () => {

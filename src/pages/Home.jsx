@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
+import Modal from "../components/Modal";
+import Editor from "../components/Editor";
 
 const HomePage = () => {
-    const [templates, setTemplates] = useState([]);
     const [images, setImages] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedImg, setSelectedImg] = useState(null);
 
     // useEffect(() => {
     //     // Fetch the templates from the API
@@ -19,18 +22,17 @@ const HomePage = () => {
     // }, []);
 
     useEffect(() => {
-        // Fetch the templates from local storage
-        const data = JSON.parse(localStorage.getItem('templates'))
-        setTemplates(data);
-    }, []);
-
-    useEffect(() => {
         fetch('https://api.unsplash.com/photos/?client_id=xGPW7tpKUYE6kyWR-vOWtpp_ZOUxpAbeH4AdA5Z-tgk')
             .then(res => res.json())
             .then(data => {
                 setImages(data);
             });
     }, []);
+
+    const handleSelectedImg = (img) => {
+        setSelectedImg(img);
+        setShowModal(true);
+    }
 
     return (
         <div style={{ padding: 20 }}>
@@ -39,7 +41,7 @@ const HomePage = () => {
                 images?.length > 0 ? (
                     <ul className="image-list">
                         {images?.map((image, index) => (
-                            <li key={index}>
+                            <li key={index} onClick={() => handleSelectedImg(image)} style={{ cursor: 'pointer' }}>
                                 <div>
                                     <img src={image.urls.small_s3} alt={image.alt_description} style={{ width: 100, height: 100 }} />
                                 </div>
@@ -51,25 +53,10 @@ const HomePage = () => {
                 )
             }
 
-            <h1>List of Templates</h1>
-            {
-                templates?.length > 0 ? (
-                    <ul>
-                        {templates?.map((template, index) => (
-                            <li key={index}>
-                                <div>
-                                    <img src={template.image} alt={template.name} style={{ width: 100, height: 100 }} />
-                                    <p>{template.name}</p>
-                                    <Link style={{marginLeft: 10}} to={`/edit/${template.templateId}`}>Edit</Link>
-                                    <Link style={{marginLeft: 10}} to={`/preview/${template.templateId}`}>Preview</Link>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No templates available.</p>
-                )
-            }
+
+            <Modal show={showModal} onClose={() => setShowModal(false)}>
+                <Editor selectedImg={selectedImg} />
+            </Modal>
         </div>
     );
 };
