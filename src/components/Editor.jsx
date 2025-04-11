@@ -8,27 +8,60 @@ function Editor(props) {
     const [selectedTemplate, setSelectedTemplate] = useState();
     const [templates, setTemplates] = useState([]);
     const [selectedSidebar, setSelectedSidebar] = useState(SIDEBAR[0].key)
-    const [selectedTheme, setSelectedTheme] = useState({color: 'red', background: '#fff'})
+    const [selectedTheme, setSelectedTheme] = useState({ color: 'white', background: 'red' })
     const businessDetails = JSON.parse(localStorage.getItem('companyDetails')) ?? {}
 
     useEffect(() => {
         // Fetch the templates from local storage
         const data = JSON.parse(localStorage.getItem('templates'))
         setTemplates(data);
-        setSelectedTemplate(data[1]);
+        setSelectedTemplate(data[3]);
     }, []);
 
     const framesContainer = useMemo(() => {
         return (
             <div className="frame-container">
-                <div className="frames">
-                    {
-                        templates.map((template, index) => (
-                            <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
-                                <img src={template.image} alt={template.name} />
-                            </button>
-                        ))
-                    }
+                <div className="frames-section">
+                    <h4>Regular Frames</h4>
+                    <div className="frames">
+                        {
+                            templates.filter(template => template.category === 'regular').length > 0 ?
+                                templates.filter(template => template.category === 'regular').map((template, index) => (
+                                    <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
+                                        <img src={template.image} alt={template.name} />
+                                    </button>
+                                )) :
+                            <p>No Frames found.</p>
+                        }
+                    </div>
+                </div>
+                <div className="frames-section">
+                    <h4>Product Frames</h4>
+                    <div className="frames">
+                        {
+                            templates.filter(template => template.category === 'product').length > 0 ?
+                                templates.filter(template => template.category === 'product').map((template, index) => (
+                                    <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
+                                        <img src={template.image} alt={template.name} />
+                                    </button>
+                                )) :
+                            <p>No Frames found.</p>
+                        }
+                    </div>
+                </div>
+                <div className="frames-section">
+                    <h4>Political Frames</h4>
+                    <div className="frames">
+                        {
+                            templates.filter(template => template.category === 'political').length > 0 ?
+                                templates.filter(template => template.category === 'political').map((template, index) => (
+                                    <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
+                                        <img src={template.image} alt={template.name} />
+                                    </button>
+                                )) :
+                            <p>No Frames found.</p>
+                        }
+                    </div>
                 </div>
             </div>
         )
@@ -102,9 +135,9 @@ function Editor(props) {
                     {currentSidebarElement}
                 </div>
 
-                <div className="canvas-container">
+                {selectedTemplate && <div className="canvas-container">
                     <CanvasRenderer theme={selectedTheme} selectedImg={selectedImg} template={selectedTemplate} businessDetails={businessDetails} />
-                </div>
+                </div>}
             </div>
         </>
     )

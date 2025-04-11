@@ -44,6 +44,8 @@ const CanvasImage = ({ element, isSelected, onSelect, onChange, isEditable = tru
     <>
       <Image
         ref={shapeRef}
+        scale={{ x: element.scaleX/2, y: element.scaleY/2 }}
+        fill={element.color}
         image={image}
         x={element.x}
         y={element.y}

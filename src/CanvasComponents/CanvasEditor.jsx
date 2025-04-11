@@ -1,5 +1,5 @@
 import { Stage, Layer } from "react-konva";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useUndoRedo } from "../hook/useUndoRedo";
 import CanvasImage from "./CanvasImage";
 import CanvasText from "./CanvasText";
@@ -10,18 +10,27 @@ import CanvasElementForm from "./CanvasElementForm";
 import CanvasClippedImage from "./CanvasClippedImage";
 
 // Canvas Editor
-const CanvasEditor = ({ template, mode='edit' }) => {
+const CanvasEditor = ({ template, mode = 'edit' }) => {
   const [elements, setElements, undo, redo] = useUndoRedo([]);
   const [selectedId, setSelectedId] = useState(null);
   const [templateName, setTemplateName] = useState('');
   const stageRef = useRef();
   const [templateCategory, setTemplateCategory] = useState('regular');
+  
+  const dimensions = useMemo(() => {
+    if (templateCategory === 'product') {
+      return { width: 500, height: 700 }
+    } else {
+      return { width: 600, height: 600 }
+    }
+  }, [templateCategory])
 
   useEffect(() => {
     // Load initial elements from template prop
     if (template?.elements) {
       setElements(template.elements);
       setTemplateName(template.name);
+      setTemplateCategory(template.category);
     } else {
       setElements([]);
     }
@@ -219,10 +228,15 @@ const CanvasEditor = ({ template, mode='edit' }) => {
     reader.readAsDataURL(file);
   };
 
+  const handleCategoryChange = (e) => {
+    setTemplateCategory(e.target.value)
+  }
+
   return (
     <div style={{ display: "flex", gap: "20px" }}>
       {/* Left Side - Canvas */}
-      <div>
+
+      <div className="button-container">
         <button onClick={addTextElement}>Add Text</button>
         <button onClick={addTextBoxElement}>Add Text Box</button>
         <button onClick={addImageElement}>Add Image</button>
@@ -233,32 +247,35 @@ const CanvasEditor = ({ template, mode='edit' }) => {
         <button onClick={undo}>Undo</button>
         <button onClick={redo}>Redo</button>
         {
-          mode === 'edit' ? 
-          <button onClick={updateTemplate}>Update Template</button> :
-          <button onClick={saveTemplate}>Save Template</button>
+          mode === 'edit' ?
+            <button onClick={updateTemplate}>Update Template</button> :
+            <button onClick={saveTemplate}>Save Template</button>
         }
 
         <button onClick={bringToFront}>Bring to Front</button>
         <button onClick={sendToBack}>Send to Back</button>
 
-        <br />
+        <label>Replace selected Image</label>
         <input type="file" onChange={handleImageChange} disabled={!selectedId} />
-        <br />
+
         <label>Template Name</label>
         <input type="text" placeholder="Your template name..." value={templateName || template?.name} onChange={(e) => setTemplateName(e.target.value)} />
-        <br />
+
         <label>Category</label>
-        <select name="category" id="category" value={templateCategory} onChange={(e) => setTemplateCategory(e.target.value)}>
+        <select name="category" id="category" value={templateCategory} onChange={handleCategoryChange}>
           <option value="regular">Regular</option>
           <option value="product">Product</option>
           <option value="political">Political</option>
         </select>
 
         <br />
+      </div>
+
+      <div className="canvas-container">
         <Stage
           ref={stageRef}
-          width={600}
-          height={600}
+          width={dimensions.width}
+          height={dimensions.height}
           onMouseDown={handleStageClick}  // 👈 Click anywhere to deselect
           onTouchStart={handleStageClick} // 👈 Works on touch devices too
         >
@@ -284,7 +301,7 @@ const CanvasEditor = ({ template, mode='edit' }) => {
       </div >
 
       {/* Right Side - Form Controls */}
-      <div>
+      <div className="form-container">
         <h3>Element Properties</h3>
         {selectedId ? (
           <CanvasElementForm

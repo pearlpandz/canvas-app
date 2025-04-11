@@ -77,3 +77,15 @@ image :: clip options
 - rounded circle 
 - rounded edge
 - perfect rectangle (sharp edge)
+
+
+(future scope)
+- diamon clip 
+- copy paste the existing elemnet
+- delete the existing element
+- undo redo for the delete and copy paste element
+
+
+canvas size 
+ 600 * 600 (regular, political)
+ 500 * 700 (product)

@@ -1,5 +1,5 @@
 import { Stage, Layer, Text, Group, Rect } from "react-konva";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CanvasText from "./CanvasText";
 import CanvasRectangleWithText from "./CanvasRectangleWithText";
 import CanvasRectangle from "./CanvasRectangle";
@@ -14,7 +14,7 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
 
   useEffect(() => {
     const updatedElements = template?.elements?.map((el) => {
-      if (el?.type === "clip-image") {
+      if (el?.type === "clip-image" || el?.type === "image") {
         if (el?.slug === "{{logo}}") {
           return {
             ...el,
@@ -25,6 +25,24 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
           return {
             ...el,
             src: selectedImg?.urls?.small
+          };
+        }
+        if (el?.slug === "{{product-img1}}") {
+          return {
+            ...el,
+            src: businessDetails?.products[0]
+          };
+        }
+        if (el?.slug === "{{product-img2}}") {
+          return {
+            ...el,
+            src: businessDetails?.products[1]
+          };
+        }
+        if (el?.slug === "{{product-img3}}") {
+          return {
+            ...el,
+            src: businessDetails?.products[2]
           };
         }
       }
@@ -74,11 +92,23 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
     document.body.removeChild(link);
   }
 
+  const {width, height} = useMemo(() => {
+    console.log("template", template)
+    if(template?.category === 'product') {
+      return {width: 500, height: 700}
+    } else {
+      return {width: 600, height: 600}
+
+    }
+  }, [template]); 
+ 
+  console.log("{width, height}", {width, height})
+
   return (
     <>
       <Stage
-        width={600}
-        height={600}
+        width={width}
+        height={height}
         ref={stageRef}
       >
         <Layer>
@@ -86,8 +116,8 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
           <Rect
             x={0}
             y={0}
-            width={600}
-            height={600}
+            width={width}
+            height={height}
             fill="white"
             listening={false} // Prevents it from capturing mouse events
           />
