@@ -76,12 +76,12 @@ const CanvasRectangleWithText = ({ element, isSelected, onSelect, onChange, isEd
       ) : (
         <Text
           // x={(shapeRef.current?.width() - textRef.current?.width() + shapeRef.current?.x()) / 2}
-          x={shapeRef.current && textRef.current
-            ? shapeRef.current.x() + shapeRef.current.width() - textRef.current.width()
-            : 0}
-          y={shapeRef.current && textRef.current
-            ? shapeRef.current.y() + shapeRef.current.height() - textRef.current.height()
-            : 0}
+          // x={shapeRef.current && textRef.current
+          //   ? shapeRef.current.x() + shapeRef.current.width() - textRef.current.width()
+          //   : 0}
+          // y={shapeRef.current && textRef.current
+          //   ? shapeRef.current.y() + shapeRef.current.height() - textRef.current.height()
+          //   : 0}
           ref={textRef}
           text={element.content}
           fontSize={element.fontSize}

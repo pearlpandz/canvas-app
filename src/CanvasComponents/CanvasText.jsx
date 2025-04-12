@@ -62,6 +62,10 @@ const CanvasText = ({ element, isSelected, onSelect, onChange, stageRef, isEdita
     });
   }
 
+  const handleDragEnd = (e) => {
+    onChange({ ...element, x: e.target.x(), y: e.target.y() });
+  }
+
   return (
     <>
       {isEditing ? (
@@ -82,16 +86,17 @@ const CanvasText = ({ element, isSelected, onSelect, onChange, stageRef, isEdita
           x={element.x}
           y={element.y}
           fontSize={element.fontSize}
-          fill={element.color}
+          fill={element.textColor}
           width={element.width > 600 ? 600 : element.width}
           height={element.height > 600 ? 600 : element.height}
-          align="center"
+          align="left"
           wrap="word"
           draggable={isEditable}
           onClick={isEditable ? onSelect : null}
           onDblClick={isEditable ? handleDblClick : null}
           onTap={isEditable ? handleDblClick : null} // Mobile support
           onTransformEnd={isEditable ? handleTransformEnd : null}
+          onDragEnd={isEditable ? handleDragEnd : null}
         />
       )}
       <TransformerComponent shapeRef={textNodeRef} isSelected={isSelected} />

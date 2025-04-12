@@ -45,6 +45,30 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
             src: businessDetails?.products[2]
           };
         }
+        if (el?.slug === "{{political-supporter-1}}") {
+          return {
+            ...el,
+            src: "https://img.freepik.com/free-photo/bohemian-man-with-his-arms-crossed_1368-3542.jpg"
+          };
+        }
+        if (el?.slug === "{{political-supporter-2}}") {
+          return {
+            ...el,
+            src: "https://img.freepik.com/free-photo/bohemian-man-with-his-arms-crossed_1368-3542.jpg"
+          };
+        }
+        if (el?.slug === "{{political-supporter-3}}") {
+          return {
+            ...el,
+            src: "https://img.freepik.com/free-photo/bohemian-man-with-his-arms-crossed_1368-3542.jpg"
+          };
+        }
+        if (el?.slug === "{{leader-image}}") {
+          return {
+            ...el,
+            src: "https://img.freepik.com/free-photo/bohemian-man-with-his-arms-crossed_1368-3542.jpg"
+          };
+        }
       }
       if (el?.type === "text-box") {
         if (el?.slug === "{{companyName}}") {
@@ -68,6 +92,22 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
             ...el,
             content: `${businessDetails?.mobileNumber1} | ${businessDetails?.mobileNumber2} | ${businessDetails?.email} | ${businessDetails?.website}`,
             color: theme?.background,
+            textColor: theme?.color,
+          };
+        }
+      }
+      if(el?.type === "text") {
+        if (el?.slug === "{{leader-name}}") {
+          return {
+            ...el,
+            content: 'Test name of leader',
+            textColor: theme?.color,
+          };
+        }
+        if (el?.slug === "{{leader-designation}}") {
+          return {
+            ...el,
+            content: 'Ward Councillor',
             textColor: theme?.color,
           };
         }
