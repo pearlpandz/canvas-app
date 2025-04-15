@@ -22,17 +22,18 @@ https://api.unsplash.com/photos/?client_id=xGPW7tpKUYE6kyWR-vOWtpp_ZOUxpAbeH4AdA
 
 Phase 1
 -------
-Demo-1
+Demo-1 (29/03)
     Initial POC
 
-Demo-2 
+Demo-2 (12/04)
     Regular (2) - take it from ref site
     Product (2) - take it from ref site
     Political (2) - take it from ref site
     user can select theme color, that will apply in the frame
+    dynamic onboarded frames
 
 Demo-3 
-    With Backend and uat environement (dynamic onboarded frames)
+    With Backend and uat environement
     no scope for users onboarding
     adding different categories and that images 
         schema(category, image, date)
@@ -80,10 +81,10 @@ image :: clip options
 
 
 (future scope)
-- diamon clip 
-- copy paste the existing elemnet
 - delete the existing element
+- copy paste the existing elemnet
 - undo redo for the delete and copy paste element
+- diamon clip 
 
 
 canvas size 

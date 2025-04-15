@@ -176,6 +176,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
       pixelRatio: 0.5 // double resolution
     });
     console.log(dataURL)
+    // const file = dataURLtoFile(dataUrl, `${templateName}.png`);
     const updatedTemplates = [
       ...existingTemplates,
       {

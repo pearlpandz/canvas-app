@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import './Editor.css';
 import CanvasRenderer from "../CanvasComponents/CanvasRenderer";
-import { SIDEBAR } from "../constants";
+import { SETTINGS, SIDEBAR } from "../constants";
 
 function Editor(props) {
     const { selectedImg } = props;
@@ -11,11 +11,27 @@ function Editor(props) {
     const [selectedTheme, setSelectedTheme] = useState({ color: 'white', background: 'red' })
     const businessDetails = JSON.parse(localStorage.getItem('companyDetails')) ?? {}
 
+    const getTemplates = async () => {
+        try {
+            const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/list`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }});
+            const data = await response.json();
+            if (response.ok) {
+                setTemplates(data);
+                setSelectedTemplate(data[3]);
+            } else {
+                console.error('Error fetching templates:', data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching templates:', error);
+        }
+    }
+
     useEffect(() => {
-        // Fetch the templates from local storage
-        const data = JSON.parse(localStorage.getItem('templates'))
-        setTemplates(data);
-        setSelectedTemplate(data[3]);
+        getTemplates();
     }, []);
 
     const framesContainer = useMemo(() => {
@@ -28,7 +44,7 @@ function Editor(props) {
                             templates.filter(template => template.category === 'regular').length > 0 ?
                                 templates.filter(template => template.category === 'regular').map((template, index) => (
                                     <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
-                                        <img src={template.image} alt={template.name} />
+                                        <img src={SETTINGS.api_endpoint + '/' + template.image} alt={template.name} />
                                     </button>
                                 )) :
                             <p>No Frames found.</p>

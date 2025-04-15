@@ -10,3 +10,7 @@ export const SIDEBAR = [{
     key: 'themes',
     icon: ThemeIcon
 }]
+
+export const SETTINGS = {
+    api_endpoint: 'http://localhost:4000',
+}
