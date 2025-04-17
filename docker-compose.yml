@@ -1,18 +1,25 @@
 version: '3.8'
 
 services:
-  django:
-    build: ./services/django
-    command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
-    volumes:
-      - ./services/django:/app
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
+      - "80:80"
+      
+  # django:
+  #   build: ./backend/services/django
+  #   command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
+  #   volumes:
+  #     - ./backend/services/django:/app
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - postgres
 
   node:
-    build: ./services/node
+    build: ./backend/services/node
     ports:
       - "4000:4000"
     depends_on:
