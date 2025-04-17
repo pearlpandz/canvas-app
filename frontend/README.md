@@ -20,55 +20,6 @@ List of Photos
 https://api.unsplash.com/photos/?client_id=xGPW7tpKUYE6kyWR-vOWtpp_ZOUxpAbeH4AdA5Z-tgk
 
 
-Phase 1
--------
-Demo-1 (29/03)
-    Initial POC
-
-Demo-2 (12/04)
-    Regular (2) - take it from ref site
-    Product (2) - take it from ref site
-    Political (2) - take it from ref site
-    user can select theme color, that will apply in the frame
-    dynamic onboarded frames
-
-Demo-3 
-    With Backend and uat environement
-    no scope for users onboarding
-    adding different categories and that images 
-        schema(category, image, date)
-
-Demo 4
-    user signup
-    signin
-    prepare documentation to load new frames into the site by admin (But need css developer help to load the css)
-
-
-Demo nth
-
-User Onboarding
-    - Hardcoded frames with 
-    - Different Subscripton (silver, gold, platinum, diamon)
-    - Mocking Roles (user, reseller, distributor, master distributor, designers, employees, admin)
-
-
-
-Phase 2
-Custom > only web version
-
-
-
-
-
-Stacks
-------
-> Next Js (Full Stack)
-> Database (PostgreSQL)
-> Github (Private repostory)
-> 
-
-
-
 
 npm install konva react-konva
 npm install use-image
@@ -85,7 +36,6 @@ image :: clip options
 - copy paste the existing elemnet
 - undo redo for the delete and copy paste element
 - diamon clip 
-
 
 canvas size 
  600 * 600 (regular, political)

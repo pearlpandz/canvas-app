@@ -4,7 +4,8 @@ wsl --distribution docker-desktop
 docker info
 docker ps
 docker pull mongo
-
+docker-compose down
+docker-compose up --build
 
 MongoDB from docker
 -------------------
