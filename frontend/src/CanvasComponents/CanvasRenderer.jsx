@@ -133,7 +133,6 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
   }
 
   const {width, height} = useMemo(() => {
-    console.log("template", template)
     if(template?.category === 'product') {
       return {width: 500, height: 700}
     } else {
@@ -141,8 +140,6 @@ const CanvasRenderer = ({ theme, selectedImg, template, businessDetails }) => {
 
     }
   }, [template]); 
- 
-  console.log("{width, height}", {width, height})
 
   return (
     <>

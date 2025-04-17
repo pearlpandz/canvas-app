@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CanvasEditor from "../CanvasComponents/CanvasEditor";
 import { useParams } from "react-router";
+import { useTemplateById } from "../hook/useTemplate";
 
 const EditPage = () => {
     const { templateId } = useParams();
-    const [template, setTemplate] = useState({});
+    const {template, isLoading} = useTemplateById(templateId);
 
-    useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('templates')) || [];
-        const template = data.find(template => template.templateId == templateId);
-        console.log(template);
-        setTemplate(template);
-    }, [templateId]);
+   if(isLoading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <div style={{ padding: 20 }}>

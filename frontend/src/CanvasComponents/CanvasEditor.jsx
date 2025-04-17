@@ -8,6 +8,8 @@ import CanvasRectangle from "./CanvasRectangle";
 import CanvasCircle from "./CanvasCircle";
 import CanvasElementForm from "./CanvasElementForm";
 import CanvasClippedImage from "./CanvasClippedImage";
+import { dataURLtoFile } from "../utils";
+import { usePatchTemplate } from "../hook/useTemplate";
 
 // Canvas Editor
 const CanvasEditor = ({ template, mode = 'edit' }) => {
@@ -16,7 +18,8 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   const [templateName, setTemplateName] = useState('');
   const stageRef = useRef();
   const [templateCategory, setTemplateCategory] = useState('regular');
-  
+  const {mutate} = usePatchTemplate()
+
   const dimensions = useMemo(() => {
     if (templateCategory === 'product') {
       return { width: 500, height: 700 }
@@ -175,41 +178,28 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     const dataURL = stageRef.current.toDataURL({
       pixelRatio: 0.5 // double resolution
     });
-    console.log(dataURL)
-    // const file = dataURLtoFile(dataUrl, `${templateName}.png`);
-    const updatedTemplates = [
-      ...existingTemplates,
-      {
-        name: templateName,
-        templateId: existingTemplates.length + 1,
-        image: dataURL,
-        elements
-      }
-    ];
-    localStorage.setItem('templates', JSON.stringify(updatedTemplates));
+    const file = dataURLtoFile(dataURL, `${templateName}.png`);
+    console.log(file)
+    const newTemplate = {
+      name: templateName,
+      templateId: existingTemplates.length + 1,
+      image: file,
+      elements
+    };
+    console.log('newTemplate', newTemplate)
     alert("Template saved successfully!");
   };
 
   const updateTemplate = async () => {
-    const existingTemplates = JSON.parse(localStorage.getItem('templates')) || [];
-    const templateIndex = existingTemplates.findIndex(t => t.templateId === template?.templateId);
-    if (templateIndex === -1) {
-      alert("Template not found!");
-      return;
-    }
     const dataURL = stageRef.current.toDataURL({
       pixelRatio: 1 // double resolution
     });
-    const updatedTemplates = [
-      ...existingTemplates.filter(t => t.templateId !== template.templateId),
-      {
-        ...existingTemplates[templateIndex],
-        name: templateName,
-        image: dataURL,
-        elements
-      }
-    ];
-    localStorage.setItem('templates', JSON.stringify(updatedTemplates));
+    const file = dataURLtoFile(dataURL, `${templateName}.png`);
+    const formdata = new FormData();
+    formdata.append('name', templateName);
+    formdata.append('image', file);
+    formdata.append('elements', JSON.stringify(elements));
+    mutate({payload: formdata, id: template._id})
     alert("Template updated successfully!");
   };
 
