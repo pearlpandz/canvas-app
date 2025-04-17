@@ -22,4 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-backend/services/node/uploads/frame/template_template_1.png
+backend/services/node/uploads/**
+**/__pycache__/**
