@@ -9,7 +9,7 @@ import CanvasCircle from "./CanvasCircle";
 import CanvasElementForm from "./CanvasElementForm";
 import CanvasClippedImage from "./CanvasClippedImage";
 import { dataURLtoFile } from "../utils";
-import { usePatchTemplate } from "../hook/useTemplate";
+import { useCreateTemplate, usePatchTemplate } from "../hook/useTemplate";
 
 // Canvas Editor
 const CanvasEditor = ({ template, mode = 'edit' }) => {
@@ -18,7 +18,10 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   const [templateName, setTemplateName] = useState('');
   const stageRef = useRef();
   const [templateCategory, setTemplateCategory] = useState('regular');
-  const {mutate} = usePatchTemplate()
+  const {mutate: patchMutate} = usePatchTemplate()
+  const {mutate: createMutate} = useCreateTemplate()
+
+  const mutate = mode === 'edit' ? patchMutate : createMutate
 
   const dimensions = useMemo(() => {
     if (templateCategory === 'product') {
@@ -174,19 +177,16 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   };
 
   const saveTemplate = async () => {
-    const existingTemplates = JSON.parse(localStorage.getItem('templates')) || [];
     const dataURL = stageRef.current.toDataURL({
       pixelRatio: 0.5 // double resolution
     });
     const file = dataURLtoFile(dataURL, `${templateName}.png`);
-    console.log(file)
-    const newTemplate = {
-      name: templateName,
-      templateId: existingTemplates.length + 1,
-      image: file,
-      elements
-    };
-    console.log('newTemplate', newTemplate)
+    const formdata = new FormData();
+    formdata.append('name', templateName);
+    formdata.append('image', file);
+    formdata.append('elements', JSON.stringify(elements));
+    formdata.append('category', templateCategory);
+    mutate({payload: formdata})
     alert("Template saved successfully!");
   };
 
@@ -199,6 +199,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     formdata.append('name', templateName);
     formdata.append('image', file);
     formdata.append('elements', JSON.stringify(elements));
+    formdata.append('category', templateCategory);
     mutate({payload: formdata, id: template._id})
     alert("Template updated successfully!");
   };

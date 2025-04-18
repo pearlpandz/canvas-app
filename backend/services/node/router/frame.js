@@ -28,7 +28,9 @@ router.post('/create', upload.single('image'), async (req, res) => {
         // Create new frame
         const newFrame = new Frame(req.body);
         newFrame.image = req.file ? req.file.path : 'uploads/placeholder-image.jpg';
-
+        if (newFrame.elements) {
+            newFrame.elements = JSON.parse(newFrame.elements)
+        }
         // Save frame to database
         await newFrame.save();
 

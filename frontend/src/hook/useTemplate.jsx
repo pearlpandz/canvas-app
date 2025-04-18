@@ -82,3 +82,29 @@ export const usePatchTemplate = () => {
 
   return mutation;
 }
+
+const createTemplate = async ({payload}) => {
+    const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/create`, {
+        method: 'POST',
+        body: payload,
+      });
+    
+      if (!response.ok) {
+        throw new Error('Failed to update user');
+      }
+    
+      return response.json();
+}
+
+export const useCreateTemplate = () => {
+    // Mutations
+  const mutation = useMutation({
+    mutationFn: createTemplate,
+    onSuccess: (data, variables) => {
+        console.log(variables, data)
+      queryClient.setQueryData(['template', variables._id], data);
+    },
+  })
+
+  return mutation;
+}

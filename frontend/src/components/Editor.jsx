@@ -58,7 +58,7 @@ function Editor(props) {
                             templates.filter(template => template.category === 'product').length > 0 ?
                                 templates.filter(template => template.category === 'product').map((template, index) => (
                                     <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
-                                        <img src={template.image} alt={template.name} />
+                                        <img src={SETTINGS.api_endpoint + '/' + template.image} alt={template.name} />
                                     </button>
                                 )) :
                             <p>No Frames found.</p>
@@ -72,7 +72,7 @@ function Editor(props) {
                             templates.filter(template => template.category === 'political').length > 0 ?
                                 templates.filter(template => template.category === 'political').map((template, index) => (
                                     <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
-                                        <img src={template.image} alt={template.name} />
+                                        <img src={SETTINGS.api_endpoint + '/' + template.image} alt={template.name} />
                                     </button>
                                 )) :
                             <p>No Frames found.</p>
