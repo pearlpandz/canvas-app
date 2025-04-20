@@ -35,8 +35,12 @@ image :: clip options
 - delete the existing element
 - copy paste the existing elemnet
 - undo redo for the delete and copy paste element
-- diamon clip 
+- diamond clip 
+- custom clip
+
 
 canvas size 
  600 * 600 (regular, political)
  500 * 700 (product)
+
+

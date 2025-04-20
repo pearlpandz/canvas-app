@@ -1,8 +1,8 @@
 from django.db import models
 
-class Category(models.Model):
+class SubCategory(models.Model):
     name = models.CharField(max_length=255)
-    order = models.IntegerField(default=1000)
+    category = models.ForeignKey('Category', related_name='subcategories', on_delete=models.CASCADE, default=None)
 
     REQUIRED_FIELDS = ['name']
 

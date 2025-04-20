@@ -18,6 +18,7 @@ Demo-3
             schema(category, image, date)
 
 Demo 4
+    Festival Calendar
     user signup
     signin
     prepare documentation to load new frames into the site by admin (But need css developer help to load the css)
@@ -39,6 +40,7 @@ Stacks
 > React Js: (FrontEnd)
 > Database: (MongoDB, PostgreSQL)
 > Github: (Private repostory)
-> Architecture: (Backend: Microservices, Frontend: monolith)
-> Deployment: Docker container, Github actions
 > Server: AWS 
+> Architecture: (Backend: Microservices, Frontend: monolith)
+> Deployment: Github Actions -> Docker Container -> EC2
+> Media storage: S3 bucket

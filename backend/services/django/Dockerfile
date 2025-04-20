@@ -16,10 +16,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Collect static files (optional)
-RUN python manage.py collectstatic --noinput
+# RUN python manage.py collectstatic --noinput
 
 # Expose the Django port
 EXPOSE 8000
 
 # Run Django app using gunicorn
-CMD ["gunicorn", "yourprojectname.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "myapp.wsgi:application", "--bind", "0.0.0.0:8000"]

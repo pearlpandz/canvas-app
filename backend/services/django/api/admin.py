@@ -1,6 +1,8 @@
 from django.contrib import admin
-from api.models.category import Category, SubCategory, Media
 from django.utils.html import format_html
+from api.models.category import Category
+from api.models.subcategory import SubCategory
+from api.models.media import Media
 
 class SubCategoryInline(admin.StackedInline):
     model = SubCategory
