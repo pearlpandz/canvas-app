@@ -20,5 +20,5 @@ python manage.py runserver
 
 
 How to start the local server
-> <environment_name>\Scripts\activate
+> .django\Scripts\activate
 > python manage.py runserver
