@@ -1,12 +1,23 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
+from rest_framework.reverse import reverse
+
 from api.models.category import Category
 from api.models.subcategory import SubCategory
 from api.models.media import Media
 
-class GroupedMediaAPIView(APIView):
-    def get(self, request):
-        
+class MediaViewSet(ViewSet):
+    def list(self, request):
+        return Response({
+            'grouped': request.build_absolute_uri(reverse('media-grouped', request=request)),
+        })
+
+    @action(detail=False, methods=['get'], url_path='grouped', url_name='grouped')
+    def grouped(self, request):
+
         grouped = []
 
         categories = Category.objects.all().order_by('order', 'id')
