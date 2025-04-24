@@ -4,6 +4,7 @@ const path = require('path');
 const multer = require('multer');
 const Frame = require('../models/frame');
 const fs = require('fs');
+const PSD = require('psd.js');
 
 function toSnakeCase(str) {
     return str.trim().toLowerCase().replace(/\s+/g, '_');
@@ -89,5 +90,25 @@ router.patch('/update/:id', upload.single('image'), async (req, res) => {
         res.status(500).json({ message: 'Error updating frame', error: error.message });
     }
 });
+
+const uploadPsd = multer({ dest: 'uploads/psd' });
+
+router.post('/upload', uploadPsd.single('psd'), async (req, res) => {
+    try {
+        const filePath = req.file.path;
+        const psd = await PSD.open(filePath);
+        psd.parse();
+    
+        const json = psd.tree().export();
+    
+        // Optional: delete uploaded file after parsing
+        fs.unlinkSync(filePath);
+    
+        res.json({ success: true, data: json });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+});
+
 
 module.exports = router;

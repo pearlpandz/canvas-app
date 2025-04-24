@@ -12,10 +12,7 @@ const EditPage = () => {
     }
 
     return (
-        <div style={{ padding: 20 }}>
-            <h1>Canvas Editor</h1>
-            <CanvasEditor template={template} mode='edit' />
-        </div>
+        <CanvasEditor template={template} mode='edit' />
     );
 };
 

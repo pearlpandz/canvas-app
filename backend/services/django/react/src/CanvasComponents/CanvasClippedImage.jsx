@@ -50,8 +50,9 @@ const CanvasClippedImage = ({ element, isSelected, onSelect, onChange, isEditabl
                 draggable={isEditable}
                 onDragMove={isEditable ? handleDragMove : null}
                 onTransformEnd={isEditable ? handleTransformEnd : null}
+                opacity={element.opacity}
             >
-                <Image fill={element.color} image={image} width={element.width} height={element.height} />
+                <Image opacity={element.opacity} fill={element.color} image={image} width={element.width} height={element.height} />
             </Group>
             <TransformerComponent shapeRef={shapeRef} isSelected={isSelected} />
         </>

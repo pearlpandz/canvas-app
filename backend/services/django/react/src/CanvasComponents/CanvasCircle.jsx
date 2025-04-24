@@ -38,9 +38,9 @@ const CanvasCircle = ({ element, isSelected, onSelect, onChange, isEditable = tr
         y={element.y}
         width={element.width}
         height={element.height}
-        // radius={element.radius}
+        radius={element.width/2}
         opacity={element.opacity / 100}
-        fill={element.color}
+        fill={element.bgColor}
         draggable={isEditable}
         onDragEnd={isEditable ? handleDragEnd : null}
         onClick={isEditable ? onSelect : null}

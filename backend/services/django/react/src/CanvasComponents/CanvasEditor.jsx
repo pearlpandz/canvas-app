@@ -10,6 +10,11 @@ import CanvasElementForm from "./CanvasElementForm";
 import CanvasClippedImage from "./CanvasClippedImage";
 import { dataURLtoFile } from "../utils";
 import { useCreateTemplate, usePatchTemplate } from "../hook/useTemplate";
+import { CiText, CiTextAlignCenter, CiTextAlignJustify, CiTextAlignLeft, CiTextAlignRight, CiImageOn, CiUndo, CiRedo } from "react-icons/ci";
+import { CgShapeCircle, CgShapeSquare } from "react-icons/cg";
+import { RiBringToFront, RiSendToBack } from "react-icons/ri";
+import Navigation from "../components/Navigation";
+import Modal from "../components/Modal";
 
 // Canvas Editor
 const CanvasEditor = ({ template, mode = 'edit' }) => {
@@ -18,8 +23,9 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   const [templateName, setTemplateName] = useState('');
   const stageRef = useRef();
   const [templateCategory, setTemplateCategory] = useState('regular');
-  const {mutate: patchMutate} = usePatchTemplate()
-  const {mutate: createMutate} = useCreateTemplate()
+  const { mutate: patchMutate } = usePatchTemplate()
+  const { mutate: createMutate } = useCreateTemplate()
+  const [show, setShow] = useState(false);
 
   const mutate = mode === 'edit' ? patchMutate : createMutate
 
@@ -83,7 +89,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
         x: 50,
         y: 50,
         fontSize: 14,
-        color: "black",
+        textColor: "black",
         textAlign: "center",
         slug: "{{text}}"
       }
@@ -99,11 +105,14 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
         content: "New Text Box",
         x: 50,
         y: 50,
-        width: 150, // ✅ Default width for text-box
-        height: 50, // ✅ Default height for text-box
+        width: 150,
+        height: 50,
         fontSize: 20,
-        color: "grey", // ✅ Background color of rectangle
-        textColor: "yellow", // ✅ Text color
+        align: 'left',
+        radius: 0,
+        padding: 0,
+        bgColor: "#ffffff", // ✅ Background color of rectangle
+        textColor: "#000000", // ✅ Text color
         slug: "{{text-box}}"
       },
     ]);
@@ -135,7 +144,8 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
         y: 150,
         width: 100,
         height: 100,
-        color: "#444",
+        radius: 0,
+        bgColor: "#444",
         opacity: 50,
         slug: "{{rect}}"
       }
@@ -150,8 +160,9 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
         type: "circle",
         x: 200,
         y: 200,
-        radius: 50,
-        color: "#444",
+        width: 100,
+        height: 100,
+        bgColor: "#444",
         opacity: 50,
         slug: "{{circle}}"
       }
@@ -168,10 +179,11 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
         width: 200,
         height: 200,
         src: "https://beautyrepublicfdl.com/wp-content/uploads/2020/06/placeholder-image.jpg",
-        radius: 30,
+        radius: 0,
+        opacity: 100,
         type: 'clip-image',
         slug: "{{clip-image}}",
-        color: '#444',
+        bgColor: '#444',
       },
     ]);
   };
@@ -186,7 +198,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     formdata.append('image', file);
     formdata.append('elements', JSON.stringify(elements));
     formdata.append('category', templateCategory);
-    mutate({payload: formdata})
+    mutate({ payload: formdata })
     alert("Template saved successfully!");
   };
 
@@ -200,7 +212,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     formdata.append('image', file);
     formdata.append('elements', JSON.stringify(elements));
     formdata.append('category', templateCategory);
-    mutate({payload: formdata, id: template._id})
+    mutate({ payload: formdata, id: template._id })
     alert("Template updated successfully!");
   };
 
@@ -225,86 +237,102 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   }
 
   return (
-    <div style={{ display: "flex", gap: "20px" }}>
-      {/* Left Side - Canvas */}
+    <>
 
-      <div className="button-container">
-        <button onClick={addTextElement}>Add Text</button>
-        <button onClick={addTextBoxElement}>Add Text Box</button>
-        <button onClick={addImageElement}>Add Image</button>
-        <button onClick={addRectangle}>Add Rectangle</button>
-        <button onClick={addCircle}>Add Circle</button>
-        <button onClick={addClipImage}>Add Rounded Image</button>
+      <Navigation onClick={mode === 'edit' ? updateTemplate : saveTemplate} mode={mode} />
 
-        <button onClick={undo}>Undo</button>
-        <button onClick={redo}>Redo</button>
-        {
-          mode === 'edit' ?
-            <button onClick={updateTemplate}>Update Template</button> :
-            <button onClick={saveTemplate}>Save Template</button>
-        }
+      <div className="layout">
+        <div className="toolbar">
+          {/* <button onClick={addTextElement}><CiText /></button> */}
+          <button onClick={addTextBoxElement}><CiText /></button>
 
-        <button onClick={bringToFront}>Bring to Front</button>
-        <button onClick={sendToBack}>Send to Back</button>
+          {/* Text Alignments - wil move to properties*/}
 
-        <label>Replace selected Image</label>
-        <input type="file" onChange={handleImageChange} disabled={!selectedId} />
 
-        <label>Template Name</label>
-        <input type="text" placeholder="Your template name..." value={templateName || template?.name} onChange={(e) => setTemplateName(e.target.value)} />
+          {/* Shapes */}
+          <button onClick={addRectangle}><CgShapeSquare /></button>
+          <button onClick={addCircle}><CgShapeCircle /></button>
 
-        <label>Category</label>
-        <select name="category" id="category" value={templateCategory} onChange={handleCategoryChange}>
-          <option value="regular">Regular</option>
-          <option value="product">Product</option>
-          <option value="political">Political</option>
-        </select>
+          {/* Image */}
+          <button onClick={addClipImage}><CiImageOn /></button>
 
-        <br />
-      </div>
+          {/* Action - wil move to properties*/}
+          {/* <button onClick={undo}><CiUndo /></button>
+          <button onClick={redo}><CiRedo /></button>
 
-      <div className="canvas-container">
-        <Stage
-          ref={stageRef}
-          width={dimensions.width}
-          height={dimensions.height}
-          onMouseDown={handleStageClick}  // 👈 Click anywhere to deselect
-          onTouchStart={handleStageClick} // 👈 Works on touch devices too
-        >
-          <Layer>
-            {elements.map(el => {
-              if (el.type === "image") {
-                return <CanvasImage key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
-              } else if (el.type === "text") {
-                return <CanvasText key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
-              } else if (el.type === "text-box") {
-                return <CanvasRectangleWithText key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
-              } else if (el.type === "rectangle") {
-                return <CanvasRectangle key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
-              } else if (el.type === "circle") {
-                return <CanvasCircle key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
-              } else if (el.type === "clip-image") {
-                return <CanvasClippedImage key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />
-              }
-              return null;
-            })}
-          </Layer>
-        </Stage>
-      </div >
+           */}
 
-      {/* Right Side - Form Controls */}
-      <div className="form-container">
-        <h3>Element Properties</h3>
-        {selectedId ? (
+        </div>
+
+        <div className="canvas-container">
+          <Stage
+            ref={stageRef}
+            width={dimensions.width}
+            height={dimensions.height}
+            onMouseDown={handleStageClick}  // 👈 Click anywhere to deselect
+            onTouchStart={handleStageClick} // 👈 Works on touch devices too
+          >
+            <Layer>
+              {elements.map(el => {
+                if (el.type === "image") {
+                  return <CanvasImage key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "text") {
+                  return <CanvasText key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "text-box") {
+                  return <CanvasRectangleWithText key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "rectangle") {
+                  return <CanvasRectangle key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "circle") {
+                  return <CanvasCircle key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "clip-image") {
+                  return <CanvasClippedImage key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />
+                }
+                return null;
+              })}
+            </Layer>
+          </Stage>
+        </div >
+
+        <div className="form-container">
           <CanvasElementForm
-            element={elements.find((el) => el.id === selectedId)}
+            element={elements?.find((el) => el.id === selectedId)}
             onChange={handleChange}
+            templateCategory={templateCategory} 
+            handleCategoryChange={handleCategoryChange}
+            templateName={templateName || template?.name} 
+            setTemplateName={setTemplateName}
           />
-        ) : (
-          <p>Select an element to edit</p>
-        )}
+        </div>
       </div>
-    </div>
+
+      {/* <Modal show={show} title='Template Properties' onClose={() => setShow(false)}>
+        <div className="modal-form-container">
+          <div className="form-group">
+            <label>Replace selected Image</label>
+            <input type="file" onChange={handleImageChange} disabled={!selectedId} />
+          </div>
+          <div className="form-group">
+            <label>Template Name</label>
+            <input type="text" placeholder="Your template name..." value={templateName || template?.name} onChange={(e) => setTemplateName(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>Category</label>
+            <select name="category" id="category" value={templateCategory} onChange={handleCategoryChange}>
+              <option value="regular">Regular</option>
+              <option value="product">Product</option>
+              <option value="political">Political</option>
+            </select>
+          </div>
+          <div className="button-container">
+            {
+              mode === 'edit' ?
+                <button onClick={updateTemplate}>Update Template</button> :
+                <button onClick={saveTemplate}>Save Template</button>
+            }
+          </div>
+        </div>
+      </Modal> */}
+    </>
   );
 };
 

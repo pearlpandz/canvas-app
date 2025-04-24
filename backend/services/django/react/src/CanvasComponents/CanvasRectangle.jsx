@@ -38,7 +38,8 @@ const CanvasRectangle = ({ element, isSelected, onSelect, onChange, isEditable =
           y={element.y}
           width={element.width}
           height={element.height}
-          fill={element.color}
+          fill={element.bgColor}
+          cornerRadius={element.radius}
           draggable={isEditable}
           onDragEnd={isEditable ? handleDragEnd : null}
           opacity={element.opacity/100}
