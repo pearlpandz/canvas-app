@@ -1,28 +1,12 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Group, Rect, Text } from "react-konva";
-import { Html } from "react-konva-utils";
 import TransformerComponent from "./TransformerComponent";
 
 // Rectangle Text Component
 const CanvasRectangleWithText = ({ element, isSelected, onSelect, onChange, isEditable = true }) => {
   const shapeRef = useRef();
   const textRef = useRef();
-  const inputRef = useRef();
-  const [text, setText] = useState(element.content);
-  const [isEditing, setIsEditing] = useState(false);
 
-  const handleDblClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleInputChange = (e) => {
-    setText(e.target.value);
-  };
-
-  const handleInputBlur = () => {
-    onChange({ ...element, content: text });
-    setIsEditing(false);
-  };
 
   const handleDragEnd = (e) => {
     onChange({ ...element, x: e.target.x(), y: e.target.y() });
@@ -55,48 +39,35 @@ const CanvasRectangleWithText = ({ element, isSelected, onSelect, onChange, isEd
         ref={shapeRef}
         width={element.width}
         height={element.height}
-        fill={element.color}
+        fill={element.bgColor}
+        cornerRadius={element.radius}
         // cornerRadius={5} // it should be parameterize
         draggable={isEditable}
         onTransformEnd={isEditable ? handleTransformEnd : null}
       />
 
       {/* Linked Text */}
-      {isEditing ? (
-        <Html>
-          <input
-            ref={inputRef}
-            type="text"
-            value={text}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            onKeyDown={(e) => e.key === "Enter" && handleInputBlur()}
-          />
-        </Html>
-      ) : (
-        <Text
-          // x={(shapeRef.current?.width() - textRef.current?.width() + shapeRef.current?.x()) / 2}
-          x={shapeRef.current && textRef.current
-            ? shapeRef.current.x() + shapeRef.current.width() - textRef.current.width()
-            : 0}
-          y={shapeRef.current && textRef.current
-            ? shapeRef.current.y() + shapeRef.current.height() - textRef.current.height()
-            : 0}
-          ref={textRef}
-          text={element.content}
-          fontSize={element.fontSize}
-          fill={element.textColor}
-          width={element.width}
-          height={element.height}
-          align="center" // should be parameterize
-          verticalAlign="middle"
-          wrap="word"
-          onClick={isEditable ? onSelect : null}
-          onDblClick={isEditable ? handleDblClick : null}
-          onTap={isEditable ? handleDblClick : null}
-        />
-      )
-      }
+
+      <Text
+        // x={(shapeRef.current?.width() - textRef.current?.width() + shapeRef.current?.x()) / 2}
+        x={shapeRef.current && textRef.current
+          ? shapeRef.current.x() + shapeRef.current.width() - textRef.current.width()
+          : 0}
+        y={shapeRef.current && textRef.current
+          ? shapeRef.current.y() + shapeRef.current.height() - textRef.current.height()
+          : 0}
+        ref={textRef}
+        text={element.content}
+        fontSize={element.fontSize}
+        fill={element.textColor}
+        width={element.width}
+        height={element.height}
+        align={element.align ?? "center"}  // should be parameterize
+        verticalAlign="middle"
+        wrap="word"
+        padding={element.padding}
+        onClick={isEditable ? onSelect : null}
+      />
 
       <TransformerComponent shapeRef={shapeRef} isSelected={isSelected} />
     </Group>
