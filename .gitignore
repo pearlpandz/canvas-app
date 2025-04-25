@@ -25,4 +25,4 @@ dist-ssr
 backend/services/node/uploads/**
 **/__pycache__/**
 **/migrations/**
-backend/services/django/media/**
+backend/services/django/uploads/**

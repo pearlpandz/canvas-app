@@ -13,12 +13,12 @@ app.use(express.urlencoded({ extended: true }));  // Parses form data
 app.use('/uploads', express.static('uploads'));  // Serves uploaded files
 
 // Set Cache-Control only for GET requests (from disk cache 200)
-app.use((req, res, next) => {
-    if (req.method === 'GET') {
-        res.set('Cache-Control', 'public, max-age=300'); // cache for 5 minutes
-    }
-    next();
-});
+// app.use((req, res, next) => {
+//     if (req.method === 'GET') {
+//         res.set('Cache-Control', 'public, max-age=300'); // cache for 5 minutes
+//     }
+//     next();
+// });
 
 // Basic route
 app.get('/', (req, res) => {
