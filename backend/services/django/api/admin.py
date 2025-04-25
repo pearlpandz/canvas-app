@@ -3,6 +3,7 @@ from django.utils.html import format_html
 from api.models.category import Category
 from api.models.subcategory import SubCategory
 from api.models.media import Media
+from api.models.event import Event, EventMedia
 
 class SubCategoryInline(admin.StackedInline):
     model = SubCategory
@@ -39,3 +40,20 @@ class MediaAdminConfig(admin.ModelAdmin):
         return "-"
     
     image_tag.short_description = 'Image'
+
+
+class EventMediaInline(admin.StackedInline):
+    model = EventMedia
+    extra = 0
+
+@admin.register(Event)
+class EventAdminConfig(admin.ModelAdmin):
+    exclude = []
+    list_display = ['name', 'date']
+    search_fields=['name']
+    list_filter=['name']
+    # actions=[make_inactive,make_active]
+    list_per_page = 10
+    sortable_by=['name', 'date']
+    ordering = ['date']
+    inlines = [EventMediaInline]

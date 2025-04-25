@@ -4,13 +4,16 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import DefaultRouter
 from api.views.media import MediaViewSet
+from api.views.event import EventViewSet
 from frontend.views import index
 
 router = DefaultRouter()
 router.register(r'media', MediaViewSet, basename='media')
+router.register(r'events', EventViewSet, basename='event')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    re_path(r'^.*$', index),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
+    re_path(r'^(?!api/).*$', index),  # Exclude paths starting with 'api/' from being routed to 'index'
+]
