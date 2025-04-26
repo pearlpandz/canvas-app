@@ -1,25 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
 import Modal from "../components/Modal";
 import Editor from "../components/Editor";
+import { usePageData } from "../hook/usePageData";
+import EventList from "../components/EventList";
+import MediaContainer from "../components/MediaContainer";
+
 
 const HomePage = () => {
     const [images, setImages] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedImg, setSelectedImg] = useState(null);
-
-    // useEffect(() => {
-    //     // Fetch the templates from the API
-    //     const getTemplates = () => {
-    //         fetch(`/api/templates`)
-    //             .then(res => res.json())
-    //             .then(data => {
-    //                 setTemplates(data);
-    //             });
-    //     }
-
-    //     getTemplates();
-    // }, []);
+    const today = new Date();
+    const [selectedDay, setSelectedDay] = useState(today)
+    const { data, isLoading } = usePageData(selectedDay);
 
     useEffect(() => {
         fetch('https://api.unsplash.com/photos/?client_id=xGPW7tpKUYE6kyWR-vOWtpp_ZOUxpAbeH4AdA5Z-tgk')
@@ -36,23 +29,15 @@ const HomePage = () => {
 
     return (
         <div style={{ padding: 20 }}>
-            <h1>List of Images</h1>
-            {
-                images?.length > 0 ? (
-                    <ul className="image-list">
-                        {images?.map((image, index) => (
-                            <li key={index} onClick={() => handleSelectedImg(image)} style={{ cursor: 'pointer' }}>
-                                <div>
-                                    <img src={image.urls.small_s3} alt={image.alt_description} style={{ width: 100, height: 100 }} />
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No images available.</p>
-                )
-            }
+            <MediaContainer data={data?.media.find(a=> a.category === 'Welcome April')} handleSelectedImg={handleSelectedImg} />
 
+            <EventList data={data?.events} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+
+            {
+                data?.media?.map((item) => (
+                    <MediaContainer key={item.category} title={item.category} data={item} />
+                ))
+            }
 
             <Modal show={showModal} onClose={() => setShowModal(false)}>
                 <Editor selectedImg={selectedImg} />
