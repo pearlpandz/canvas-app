@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useMemo, useRef } from "react";
 import { Circle, Line } from "react-konva";
 
@@ -9,16 +10,20 @@ export default function MultiPointLine({
   onChange,
   ...rest
 }) {
-  const { x = 0, y = 0 } = rest;
+  const shapeRef = useRef();
+  const { x = 0, y = 0, scaleX = 1, scaleY = 1, bgColor, strokeColor, strokeWidth, opacity = 100 } = rest;
 
   const mappedPoints = useMemo(() => {
     if (!points || !activatePoints) return [];
     const mappedPoints = [];
     for (let i = 0; i < points.length; i += 2) {
-      mappedPoints.push({ x: points[i] + x, y: points[i + 1] + y });
+      mappedPoints.push({
+        x: points[i] * scaleX + x,
+        y: points[i + 1] * scaleY + y,
+      });
     }
     return mappedPoints;
-  }, [points, x, y, activatePoints]);
+  }, [points, x, y, scaleX, scaleY, activatePoints]);
 
   const hoverRef = useRef(null);
 
@@ -31,14 +36,40 @@ export default function MultiPointLine({
     onChange({ ...element, x: e.target.x(), y: e.target.y() });
   };
 
+  const handleTransformEnd = (e) => {
+    let node = e.target;
+    const newWidth = node.width() * node.scaleX();
+    const newHeight = node.height() * node.scaleY();
+
+    console.log("Transform End Triggered");
+    console.log("Rotation:", node.rotation());
+
+    const { onClick, draggable, ...element } = rest;
+    onChange({
+      ...element,
+      x: node.x(),
+      y: node.y(),
+      width: newWidth,
+      height: newHeight,
+      scaleX: node.scaleX(),
+      scaleY: node.scaleY(),
+      rotation: node.rotation(),
+    });
+  }
+  console.log(opacity)
   return (
     <>
       <Line
+        ref={shapeRef}
         tension={0.5}
-        stroke="black"
-        strokeWidth={2}
+        lineCap="round"
+        lineJoin="round"
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
         points={points}
         onDragEnd={handleDragEnd}
+        onTransformEnd={handleTransformEnd}
+        fill={bgColor}
         {...rest}
       />
       {mappedPoints.map((point, index) => {

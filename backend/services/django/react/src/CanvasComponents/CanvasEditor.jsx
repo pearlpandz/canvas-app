@@ -11,8 +11,10 @@ import CanvasClippedImage from "./CanvasClippedImage";
 import { dataURLtoFile, getNumericVal, getRelativePointerPosition } from "../utils";
 import { useCreateTemplate, usePatchTemplate } from "../hook/useTemplate";
 import { CiText, CiTextAlignCenter, CiTextAlignJustify, CiTextAlignLeft, CiTextAlignRight, CiImageOn, CiUndo, CiRedo } from "react-icons/ci";
+import { MdOutlineFormatShapes } from "react-icons/md";
 import { CgShapeCircle, CgShapeHexagon, CgShapeSquare, CgShapeTriangle } from "react-icons/cg";
 import { BiCircleHalf } from "react-icons/bi";
+import { TbShape } from "react-icons/tb";
 import { RiBringToFront, RiSendToBack } from "react-icons/ri";
 import Navigation from "../components/Navigation";
 import Modal from "../components/Modal";
@@ -100,8 +102,8 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
           id,
           points: [x, y],
           type: 'MultiPointLine',
-          stroke: '#444000',
-          fill: '#ff0000',
+          strokeColor: '#444000',
+          bgColor: '#ff0000',
           slug: '{{MultiPointLine}}',
           strokeWidth: 2,
         });
@@ -121,17 +123,9 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
             setDrawAction(null);
           }
         } else {
-          console.log('logging', 'else coming')
           numMultiPointRef.current += 1;
         }
-        // setCurrentlyDrawnShape((prevLine) => ({
-        //   ...prevLine,
-        //   points: [...(prevLine?.points || []), x, y],
-        // }));
-
       }
-
-
       return;
     }
 
@@ -230,11 +224,14 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
       y: 50,
       width: 150,
       height: 50,
+      radius: [0, 0, 0, 0],
       fontSize: 20,
       align: 'left',
-      radius: 0,
       padding: 0,
       bgColor: "#ffffff", // ✅ Background color of rectangle
+      opacity: 50,
+      strokeWidth: 0,
+      strokeColor: '#FF0000',
       textColor: "#000000", // ✅ Text color
       slug: "{{text-box}}"
     }
@@ -412,7 +409,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     const formdata = new FormData();
     formdata.append('name', templateName);
     formdata.append('image', file);
-    formdata.append('elements', JSON.stringify(elements));
+    formdata.append('elements', JSON.stringify(elements?.filter(a => Object.keys(a).length > 0)));
     formdata.append('category', templateCategory);
     mutate({ payload: formdata })
     alert("Template saved successfully!");
@@ -471,7 +468,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
 
       <div className="layout">
         <div className="toolbar">
-          <button onClick={addTextBoxElement}><CiText /></button>
+          <button onClick={addTextBoxElement}><MdOutlineFormatShapes /></button>
 
           {/* Text Alignments - wil move to properties*/}
 
@@ -482,7 +479,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
           <button onClick={addTriangle}><CgShapeTriangle /></button>
           <button onClick={() => addPolygon()}><CgShapeHexagon /></button>
           <button onClick={() => addWedge()}><BiCircleHalf /></button>
-          <button onClick={() => setDrawAction('MultiPointLine')}>MultiLine <BiCircleHalf /></button>
+          <button onClick={() => setDrawAction('MultiPointLine')}><TbShape /></button>
 
           {/* Image */}
           <button onClick={addClipImage}><CiImageOn /></button>
@@ -549,7 +546,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
                       {...shapeProps}
                     />
 
-                    <Transformer ref={transformerRef} rotateEnabled={true} />
+                    <Transformer ref={transformerRef} rotateEnabled={false} />
                   </>
                 }
                 return null;

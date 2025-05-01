@@ -38,7 +38,13 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "10px",
+      height: "100%",
+      overflowY: "auto"
+    }}>
       <div className="template-properties">
         <h6>template properties</h6>
 
@@ -68,37 +74,41 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
           <button className='icon-btn'><RiSendBackward /></button>
           <button className='icon-btn'><RiSendToBack /></button>
         </div>
-        <div className="text-alignments flex">
-          <button onClick={() => updateValue('align', 'center')} className={`icon-btn ${element?.align === 'center' && 'active'}`}><CiTextAlignCenter /></button>
-          <button onClick={() => updateValue('align', 'justify')} className={`icon-btn ${element?.align === 'justify' && 'active'}`}><CiTextAlignJustify /></button>
-          <button onClick={() => updateValue('align', 'left')} className={`icon-btn ${element?.align === 'left' && 'active'}`}><CiTextAlignLeft /></button>
-          <button onClick={() => updateValue('align', 'right')} className={`icon-btn ${element?.align === 'right' && 'active'}`}><CiTextAlignRight /></button>
-        </div>
+        {element?.type === "text-box" && (
+          <div className="text-alignments flex">
+            <button onClick={() => updateValue('align', 'center')} className={`icon-btn ${element?.align === 'center' && 'active'}`}><CiTextAlignCenter /></button>
+            <button onClick={() => updateValue('align', 'justify')} className={`icon-btn ${element?.align === 'justify' && 'active'}`}><CiTextAlignJustify /></button>
+            <button onClick={() => updateValue('align', 'left')} className={`icon-btn ${element?.align === 'left' && 'active'}`}><CiTextAlignLeft /></button>
+            <button onClick={() => updateValue('align', 'right')} className={`icon-btn ${element?.align === 'right' && 'active'}`}><CiTextAlignRight /></button>
+          </div>
+        )}
       </div>
 
       {/* section 2 */}
       <div className="placement">
         <h6>transform</h6>
         <div className="element-placement" >
-          <div className="element-size">
-            <label>
-              <span>W</span>
-              <input
-                type="number"
-                value={Math.ceil(element?.width || 100)}
-                onChange={(e) => updateValue("width", parseInt(e.target.value))}
-              />
-            </label>
+          {!["MultiPointLine"].includes(element?.type) && (
+            <div className="element-size">
+              <label>
+                <span>W</span>
+                <input
+                  type="number"
+                  value={Math.ceil(element?.width || 100)}
+                  onChange={(e) => updateValue("width", parseInt(e.target.value))}
+                />
+              </label>
 
-            <label>
-              <span>H</span>
-              <input
-                type="number"
-                value={Math.ceil(element?.height || 100)}
-                onChange={(e) => updateValue("height", parseInt(e.target.value))}
-              />
-            </label>
-          </div>
+              <label>
+                <span>H</span>
+                <input
+                  type="number"
+                  value={Math.ceil(element?.height || 100)}
+                  onChange={(e) => updateValue("height", parseInt(e.target.value))}
+                />
+              </label>
+            </div>
+          )}
           <div className="element-axis">
             <label>
               <span>X</span>
@@ -202,7 +212,7 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
 
 
 
-        {['rectangle'].includes(element?.type) && (
+        {['rectangle', 'text-box'].includes(element?.type) && (
           <>
             <label>
               <span>radius</span>
@@ -271,7 +281,7 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
           </label>
         )}
 
-        <label>
+        {!["MultiPointLine"].includes(element?.type) && <label>
           <span>opacity</span>
           <input
             type="range"
@@ -280,7 +290,7 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
             max={100}
             onChange={(e) => updateValue("opacity", parseInt(e.target.value))}
           />
-        </label>
+        </label>}
       </div>
 
       {element && <div className="style-properties attributes">
