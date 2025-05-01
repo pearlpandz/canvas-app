@@ -29,11 +29,7 @@ Free Drawing (p1)
 
 curve (p1) - "completed"
 completed:
-
 - any type of curves possible with transform and rotate.
-
-pending:
-
 - fill
 - stroke (color, width)
 - the adjustment dots should be in the right position
