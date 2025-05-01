@@ -13,14 +13,14 @@ export default function MultiPointLine({
 
   const mappedPoints = useMemo(() => {
     if (!points || !activatePoints) return [];
-    const mappedPoints: { x?: number; y?: number }[] = [];
+    const mappedPoints = [];
     for (let i = 0; i < points.length; i += 2) {
       mappedPoints.push({ x: points[i] + x, y: points[i + 1] + y });
     }
     return mappedPoints;
   }, [points, x, y, activatePoints]);
 
-  const hoverRef = useRef<any>(null);
+  const hoverRef = useRef(null);
 
   useEffect(() => {
     document.body.style.cursor = "default";
