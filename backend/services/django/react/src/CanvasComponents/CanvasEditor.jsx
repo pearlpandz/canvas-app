@@ -63,7 +63,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   const handleSelect = (id) => setSelectedId(id);
 
   const handleChange = (newAttrs) => {
-    setElements(elements.map(el => (el.id === newAttrs.id ? newAttrs : el)));
+    setElements(elements.map(el => (el.id === newAttrs.id ? { ...el, ...newAttrs } : el)));
   };
 
   const deSelect = useCallback(() => {
@@ -545,10 +545,11 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
                           })
                         );
                       }}
+                      onChange={handleChange}
                       {...shapeProps}
                     />
 
-                    <Transformer ref={transformerRef} rotateEnabled={true} shouldOverdrawWholeArea={el.id === selectedId} />
+                    <Transformer ref={transformerRef} rotateEnabled={true} />
                   </>
                 }
                 return null;

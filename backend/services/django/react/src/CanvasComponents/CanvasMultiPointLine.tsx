@@ -6,6 +6,7 @@ export default function MultiPointLine({
   activatePoints,
   isSelected,
   onPointDrag,
+  onChange,
   ...rest
 }) {
   const { x = 0, y = 0 } = rest;
@@ -25,6 +26,11 @@ export default function MultiPointLine({
     document.body.style.cursor = "default";
   }, [activatePoints]);
 
+  const handleDragEnd = (e) => {
+    const { onClick, draggable, ...element } = rest;
+    onChange({ ...element, x: e.target.x(), y: e.target.y() });
+  };
+
   return (
     <>
       <Line
@@ -32,6 +38,7 @@ export default function MultiPointLine({
         stroke="black"
         strokeWidth={2}
         points={points}
+        onDragEnd={handleDragEnd}
         {...rest}
       />
       {mappedPoints.map((point, index) => {
