@@ -1,5 +1,5 @@
-import { Stage, Layer } from "react-konva";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { Stage, Layer, Transformer } from "react-konva";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useUndoRedo } from "../hook/useUndoRedo";
 import CanvasImage from "./CanvasImage";
 import CanvasText from "./CanvasText";
@@ -8,13 +8,19 @@ import CanvasRectangle from "./CanvasRectangle";
 import CanvasCircle from "./CanvasCircle";
 import CanvasElementForm from "./CanvasElementForm";
 import CanvasClippedImage from "./CanvasClippedImage";
-import { dataURLtoFile } from "../utils";
+import { dataURLtoFile, getNumericVal, getRelativePointerPosition } from "../utils";
 import { useCreateTemplate, usePatchTemplate } from "../hook/useTemplate";
 import { CiText, CiTextAlignCenter, CiTextAlignJustify, CiTextAlignLeft, CiTextAlignRight, CiImageOn, CiUndo, CiRedo } from "react-icons/ci";
-import { CgShapeCircle, CgShapeSquare } from "react-icons/cg";
+import { CgShapeCircle, CgShapeHexagon, CgShapeSquare, CgShapeTriangle } from "react-icons/cg";
+import { BiCircleHalf } from "react-icons/bi";
 import { RiBringToFront, RiSendToBack } from "react-icons/ri";
 import Navigation from "../components/Navigation";
 import Modal from "../components/Modal";
+import CanvasPolygon from "./CanvasPolygon";
+import CanvasWedge from "./CanvasWedge";
+import { v4 as uuidv4 } from "uuid";
+import MultiPointLine from "./CanvasMultiPointLine";
+import TransformerComponent from "./TransformerComponent";
 
 // Canvas Editor
 const CanvasEditor = ({ template, mode = 'edit' }) => {
@@ -26,6 +32,12 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   const { mutate: patchMutate } = usePatchTemplate()
   const { mutate: createMutate } = useCreateTemplate()
   const [show, setShow] = useState(false);
+
+  const [drawAction, setDrawAction] = useState(null);
+  const [currentlyDrawnShape, setCurrentlyDrawnShape] = useState({});
+  const numMultiPointRef = useRef(0);
+  const isPaintRef = useRef(false);
+  const transformerRef = useRef(null);
 
   const mutate = mode === 'edit' ? patchMutate : createMutate
 
@@ -54,11 +66,122 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     setElements(elements.map(el => (el.id === newAttrs.id ? newAttrs : el)));
   };
 
+  const deSelect = useCallback(() => {
+    setSelectedId(null);
+    transformerRef?.current?.nodes([]);
+  }, []);
+
+  const checkDeselect = useCallback((e) => {
+    const clickedOnEmpty = e.target === stageRef?.current;
+    if (clickedOnEmpty) {
+      deSelect();
+    }
+  }, [stageRef, deSelect]);
+
   const handleStageClick = (e) => {
     // Deselect if clicking on empty space
     if (e.target === e.target.getStage()) {
-      setSelectedId(null);
+      checkDeselect(e);
     }
+
+
+    // only for MultiPointLine
+    const stage = stageRef?.current;
+    if (e.evt.button !== 0 || !stage) return;
+    const id = uuidv4();
+
+    const pos = getRelativePointerPosition(stage);
+    const x = getNumericVal(pos?.x);
+    const y = getNumericVal(pos?.y);
+
+    if (drawAction === 'MultiPointLine') {
+      if (numMultiPointRef.current === 0) {
+        setCurrentlyDrawnShape({
+          id,
+          points: [x, y],
+          type: 'MultiPointLine',
+          stroke: '#444000',
+          fill: '#ff0000',
+          slug: '{{MultiPointLine}}',
+          strokeWidth: 2,
+        });
+        numMultiPointRef.current += 1;
+      } else {
+        if (
+          numMultiPointRef.current >= 3 &&
+          currentlyDrawnShape?.points?.[0] ===
+          currentlyDrawnShape?.points?.at(-2) &&
+          currentlyDrawnShape?.points?.[1] ===
+          currentlyDrawnShape?.points?.at(-1)
+        ) {
+          if (currentlyDrawnShape) {
+            setElements([...elements, currentlyDrawnShape]);
+            setCurrentlyDrawnShape({});
+            numMultiPointRef.current = 0;
+            setDrawAction(null);
+          }
+        } else {
+          console.log('logging', 'else coming')
+          numMultiPointRef.current += 1;
+        }
+        // setCurrentlyDrawnShape((prevLine) => ({
+        //   ...prevLine,
+        //   points: [...(prevLine?.points || []), x, y],
+        // }));
+
+      }
+
+
+      return;
+    }
+
+    isPaintRef.current = true;
+
+  };
+
+  const handleStageMouseUp = () => {
+    if (numMultiPointRef.current) return;
+    isPaintRef.current = false;
+    numMultiPointRef.current = 0;
+    setDrawAction(null);
+
+    if (currentlyDrawnShape)
+      setElements([...elements, currentlyDrawnShape]);
+    setCurrentlyDrawnShape({});
+  }
+
+  const handleStageMouseMove = (e) => {
+    const stage = stageRef?.current;
+    if (e.evt.button !== 0 || !stage) return;
+
+    const pos = getRelativePointerPosition(stage);
+    const x = getNumericVal(pos?.x);
+    const y = getNumericVal(pos?.y);
+
+    if (numMultiPointRef.current && drawAction === 'MultiPointLine') {
+      setCurrentlyDrawnShape((prevLine) => {
+        const prevPoints = [...(prevLine?.points || [])];
+        const pointsLength = numMultiPointRef.current;
+
+        if (
+          Math.abs(prevPoints?.[0] - x) < 7 &&
+          Math.abs(prevPoints?.[1] - y) < 7
+        ) {
+          prevPoints[pointsLength * 2] = prevPoints?.[0];
+          prevPoints[pointsLength * 2 + 1] = prevPoints?.[1];
+        } else {
+          prevPoints[pointsLength * 2] = x;
+          prevPoints[pointsLength * 2 + 1] = y;
+        }
+
+        return { ...prevLine, points: prevPoints };
+      });
+
+      return;
+    }
+
+    if (!isPaintRef.current) return;
+
   };
 
   const bringToFront = () => {
@@ -97,25 +220,29 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   };
 
   const addTextBoxElement = () => {
+    deSelect();
+    const id = uuidv4();
+    const newTextBoxElement = {
+      id,
+      type: "text-box",  // ✅ New type for linked Text & Rectangle
+      content: "New Text Box",
+      x: 50,
+      y: 50,
+      width: 150,
+      height: 50,
+      fontSize: 20,
+      align: 'left',
+      radius: 0,
+      padding: 0,
+      bgColor: "#ffffff", // ✅ Background color of rectangle
+      textColor: "#000000", // ✅ Text color
+      slug: "{{text-box}}"
+    }
     setElements([
       ...elements,
-      {
-        id: `text-box-${Date.now()}`,
-        type: "text-box",  // ✅ New type for linked Text & Rectangle
-        content: "New Text Box",
-        x: 50,
-        y: 50,
-        width: 150,
-        height: 50,
-        fontSize: 20,
-        align: 'left',
-        radius: 0,
-        padding: 0,
-        bgColor: "#ffffff", // ✅ Background color of rectangle
-        textColor: "#000000", // ✅ Text color
-        slug: "{{text-box}}"
-      },
+      newTextBoxElement
     ]);
+    setSelectedId(id); // Select the new element
   };
 
   const addImageElement = () => {
@@ -135,57 +262,146 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
   };
 
   const addRectangle = () => {
+    deSelect();
+    const id = uuidv4();
+    const newRectangleElement = {
+      id,
+      type: "rectangle",
+      x: 150,
+      y: 150,
+      width: 100,
+      height: 100,
+      radius: [0, 0, 0, 0],
+      bgColor: "#444000",
+      opacity: 50,
+      strokeWidth: 0,
+      strokeColor: '#FF0000',
+      slug: "{{rect}}"
+    }
     setElements([
       ...elements,
-      {
-        id: `rect-${Date.now()}`,
-        type: "rectangle",
-        x: 150,
-        y: 150,
-        width: 100,
-        height: 100,
-        radius: 0,
-        bgColor: "#444",
-        opacity: 50,
-        slug: "{{rect}}"
-      }
+      newRectangleElement
     ]);
+    setSelectedId(id);
+  };
+
+  const addPolygon = (type = 'polygon', sides = 6) => {
+    deSelect();
+    const id = uuidv4();
+    const newPolygonElement = {
+      id,
+      type: type,
+      x: 150,
+      y: 150,
+      width: 100,
+      height: 100,
+      bgColor: "#444000",
+      opacity: 50,
+      strokeWidth: 0,
+      strokeColor: '#FF0000',
+      sides,
+      slug: `{{${type}}}`
+    }
+    setElements([
+      ...elements,
+      newPolygonElement
+    ]);
+    setSelectedId(id);
+  };
+
+  const addWedge = () => {
+    deSelect();
+    const id = uuidv4();
+    const newWedgeElement = {
+      id,
+      type: 'wedge',
+      x: 150,
+      y: 150,
+      width: 100,
+      height: 100,
+      bgColor: "#444000",
+      opacity: 50,
+      strokeWidth: 0,
+      strokeColor: '#FF0000',
+      angle: 180,
+      slug: `{{wedge}}`
+    }
+    setElements([
+      ...elements,
+      newWedgeElement
+    ]);
+    setSelectedId(id);
+  }
+
+  const addTriangle = () => {
+    deSelect();
+    const id = uuidv4();
+    const newTriangleElement = {
+      id,
+      type: "triangle",
+      x: 150,
+      y: 150,
+      width: 100,
+      height: 100,
+      bgColor: "#444000",
+      opacity: 50,
+      strokeWidth: 0,
+      strokeColor: '#FF0000',
+      sides: 3,
+      lineJoin: 'bevel',
+      slug: "{{triangle}}"
+    }
+    setElements([
+      ...elements,
+      newTriangleElement
+    ]);
+    setSelectedId(id);
   };
 
   const addCircle = () => {
+    deSelect();
+    const id = uuidv4();
+    const newCircleElement = {
+      id,
+      type: "circle",
+      x: 200,
+      y: 200,
+      width: 100,
+      height: 100,
+      bgColor: "#444",
+      opacity: 50,
+      strokeWidth: 0,
+      strokeColor: '#FF0000',
+      slug: "{{circle}}"
+    }
     setElements([
       ...elements,
-      {
-        id: `circle-${Date.now()}`,
-        type: "circle",
-        x: 200,
-        y: 200,
-        width: 100,
-        height: 100,
-        bgColor: "#444",
-        opacity: 50,
-        slug: "{{circle}}"
-      }
+      newCircleElement
     ]);
+    setSelectedId(id);
   };
 
   const addClipImage = () => {
+    deSelect();
+    const id = uuidv4();
+    const newClipImageElement = {
+      id,
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 200,
+      src: "https://beautyrepublicfdl.com/wp-content/uploads/2020/06/placeholder-image.jpg",
+      radius: 0,
+      opacity: 100,
+      type: 'clip-image',
+      slug: "{{clip-image}}",
+      bgColor: '#444',
+    }
     setElements([
       ...elements,
-      {
-        id: `image-${Date.now()}`,
-        x: 100,
-        y: 100,
-        width: 200,
-        height: 200,
-        src: "https://beautyrepublicfdl.com/wp-content/uploads/2020/06/placeholder-image.jpg",
-        radius: 0,
-        opacity: 100,
-        type: 'clip-image',
-        slug: "{{clip-image}}",
-        bgColor: '#444',
-      },
+      newClipImageElement
     ]);
+    setSelectedId(id);
   };
 
   const saveTemplate = async () => {
@@ -222,7 +438,6 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      console.log(reader.result)
       setElements(
         elements.map((el) =>
           el.id === selectedId ? { ...el, src: reader.result } : el
@@ -236,6 +451,19 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     setTemplateCategory(e.target.value)
   }
 
+  const onShapeClick = (e) => {
+    const node = e.currentTarget;
+    handleSelect(node.attrs.id);
+    // eslint-disable-next-line no-debugger
+    // debugger;
+    transformerRef.current?.nodes([node]);
+  };
+
+  const shapeProps = {
+    onClick: onShapeClick,
+    draggable: true,
+  };
+
   return (
     <>
 
@@ -243,7 +471,6 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
 
       <div className="layout">
         <div className="toolbar">
-          {/* <button onClick={addTextElement}><CiText /></button> */}
           <button onClick={addTextBoxElement}><CiText /></button>
 
           {/* Text Alignments - wil move to properties*/}
@@ -252,6 +479,10 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
           {/* Shapes */}
           <button onClick={addRectangle}><CgShapeSquare /></button>
           <button onClick={addCircle}><CgShapeCircle /></button>
+          <button onClick={addTriangle}><CgShapeTriangle /></button>
+          <button onClick={() => addPolygon()}><CgShapeHexagon /></button>
+          <button onClick={() => addWedge()}><BiCircleHalf /></button>
+          <button onClick={() => setDrawAction('MultiPointLine')}>MultiLine <BiCircleHalf /></button>
 
           {/* Image */}
           <button onClick={addClipImage}><CiImageOn /></button>
@@ -269,11 +500,13 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
             ref={stageRef}
             width={dimensions.width}
             height={dimensions.height}
+            onMouseUp={handleStageMouseUp}
             onMouseDown={handleStageClick}  // 👈 Click anywhere to deselect
+            onMouseMove={handleStageMouseMove}
             onTouchStart={handleStageClick} // 👈 Works on touch devices too
           >
             <Layer>
-              {elements.map(el => {
+              {[...elements, currentlyDrawnShape].map(el => {
                 if (el.type === "image") {
                   return <CanvasImage key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
                 } else if (el.type === "text") {
@@ -286,6 +519,37 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
                   return <CanvasCircle key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
                 } else if (el.type === "clip-image") {
                   return <CanvasClippedImage key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />
+                } else if (el.type === "polygon") {
+                  return <CanvasPolygon key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "triangle") {
+                  return <CanvasPolygon key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "wedge") {
+                  return <CanvasWedge key={el.id} element={el} isSelected={el.id === selectedId} onSelect={() => handleSelect(el.id)} onChange={handleChange} />;
+                } else if (el.type === "MultiPointLine") {
+                  // move to different component and implement properties
+                  return <>
+                    <MultiPointLine
+                      {...el}
+                      closed={el?.id !== currentlyDrawnShape?.id}
+                      activatePoints={
+                        el?.id === currentlyDrawnShape?.id ||
+                        el?.id === selectedId
+                      }
+                      isSelected={el?.id === selectedId}
+                      onPointDrag={(newPoints) => {
+                        setElements(
+                          elements.map((drawing) => {
+                            if (drawing.id === selectedId) {
+                              return { ...drawing, points: newPoints };
+                            } else return drawing;
+                          })
+                        );
+                      }}
+                      {...shapeProps}
+                    />
+
+                    <Transformer ref={transformerRef} rotateEnabled={true} shouldOverdrawWholeArea={el.id === selectedId} />
+                  </>
                 }
                 return null;
               })}
@@ -297,9 +561,9 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
           <CanvasElementForm
             element={elements?.find((el) => el.id === selectedId)}
             onChange={handleChange}
-            templateCategory={templateCategory} 
+            templateCategory={templateCategory}
             handleCategoryChange={handleCategoryChange}
-            templateName={templateName || template?.name} 
+            templateName={templateName || template?.name}
             setTemplateName={setTemplateName}
           />
         </div>

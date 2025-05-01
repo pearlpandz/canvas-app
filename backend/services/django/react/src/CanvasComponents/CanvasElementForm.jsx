@@ -9,6 +9,34 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
     onChange({ ...element, [field]: value });
   };
 
+  const updateRadius = (field, value) => {
+    let updatedValue = element.radius
+    switch (field) {
+      case 'topleft':
+        updatedValue[0] = value;
+        onChange({ ...element, radius: updatedValue });
+        break;
+
+      case 'topright':
+        updatedValue[1] = value;
+        onChange({ ...element, radius: updatedValue });
+        break;
+
+      case 'bottomleft':
+        updatedValue[3] = value;
+        onChange({ ...element, radius: updatedValue });
+        break;
+
+      case 'bottomright':
+        updatedValue[2] = value;
+        onChange({ ...element, radius: updatedValue });
+        break;
+
+      default:
+        break;
+    }
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
       <div className="template-properties">
@@ -129,6 +157,40 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
           />
         </label>}
 
+        {element?.type !== 'clip-image' && <label>
+          <span>stroke</span>
+          <input
+            type="color"
+            value={element?.strokeColor}
+            onChange={(e) => updateValue("strokeColor", e.target.value)}
+          />
+          <input
+            type="number"
+            value={element?.strokeWidth}
+            onChange={(e) => updateValue("strokeWidth", parseInt(e.target.value))}
+            style={{ marginLeft: 10 }}
+          />
+        </label>}
+
+        {element?.type === 'polygon' && <label>
+          <span>sides</span>
+          <input
+            type="number"
+            value={element?.sides}
+            onChange={(e) => updateValue("sides", parseInt(e.target.value))}
+            style={{ marginLeft: 10 }}
+          />
+        </label>}
+
+        {element?.type === 'triangle' && <label>
+          <span>Line Join</span>
+          <select name="triangleType" id="triangleType" value={element.lineJoin} onChange={(e) => updateValue("lineJoin", e.target.value)}>
+            <option value="miter">miter</option>
+            <option value="bevel">bevel</option>
+            <option value="round">round</option>
+          </select>
+        </label>}
+
         {element?.type === 'text-box' && <label>
           <span>color</span>
           <input
@@ -138,16 +200,76 @@ const CanvasElementForm = ({ element, onChange, templateCategory, handleCategory
           />
         </label>}
 
-        <label>
-          <span>radius</span>
-          <input
-            type="range"
-            value={element?.radius}
-            min={0}
-            max={100}
-            onChange={(e) => updateValue("radius", parseInt(e.target.value))}
-          />
-        </label>
+
+
+        {['rectangle'].includes(element?.type) && (
+          <>
+            <label>
+              <span>radius</span>
+            </label>
+            <div className="element-placement" >
+              <div className="element-size">
+                <label>
+                  <span>TL</span>
+                  <input
+                    type="number"
+                    value={element?.radius[0]}
+                    onChange={(e) => updateRadius("topleft", parseInt(e.target.value))}
+                  />
+                </label>
+                <label>
+                  <span>BL</span>
+                  <input
+                    type="number"
+                    value={element?.radius[3]}
+                    onChange={(e) => updateRadius("bottomleft", parseInt(e.target.value))}
+                  />
+                </label>
+
+              </div>
+              <div className="element-axis">
+                <label>
+                  <span>TR</span>
+                  <input
+                    type="number"
+                    value={element?.radius[1]}
+                    onChange={(e) => updateRadius("topright", parseInt(e.target.value))}
+                  />
+                </label>
+
+
+                <label>
+                  <span>BR</span>
+                  <input
+                    type="number"
+                    value={element?.radius[2]}
+                    onChange={(e) => updateRadius("bottomright", parseInt(e.target.value))}
+                  />
+                </label>
+              </div>
+            </div>
+          </>
+        )}
+
+        {['wedge'].includes(element?.type) && (
+          <label>
+            <span>angle</span>
+            <input
+              type="number"
+              value={element?.angle}
+              onChange={(e) => updateValue("angle", parseInt(e.target.value))}
+              style={{ marginLeft: 10 }}
+            />
+            <input
+              type="range"
+              value={element?.angle}
+              min={0}
+              max={360}
+              onChange={(e) => updateValue("angle", parseInt(e.target.value))}
+            />
+
+          </label>
+        )}
 
         <label>
           <span>opacity</span>
