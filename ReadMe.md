@@ -44,9 +44,3 @@ Stacks
 > Architecture: (Backend: Microservices, Frontend: monolith)
 > Deployment: Github Actions -> Docker Container -> EC2
 > Media storage: S3 bucket
-
-Github - personal access tokens
--------------------------------
-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
-
-echo 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 | docker login ghcr.io -u pearlpandz --password-stdin
