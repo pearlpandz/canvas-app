@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   frontend:
+    image: ghcr.io/pearlpandz/frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -9,6 +10,7 @@ services:
       - "80:80"
       
   django:
+    image: ghcr.io/pearlpandz/django:latest
     build: ./backend/services/django
     command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
     volumes:
@@ -19,6 +21,7 @@ services:
       - postgres
 
   node:
+    image: ghcr.io/pearlpandz/node:latest
     build: ./backend/services/node
     ports:
       - "4000:4000"
@@ -26,7 +29,7 @@ services:
       - mongo
 
   postgres:
-    image: postgres:14
+    image: ghcr.io/pearlpandz/postgres:14
     restart: always
     environment:
       POSTGRES_DB: mydb
@@ -38,7 +41,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   mongo:
-    image: mongo
+    image: ghcr.io/pearlpandz/mongo
     ports:
       - "27017:27017"
     environment:
