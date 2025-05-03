@@ -40,7 +40,7 @@ SECRET_KEY = 'django-insecure-o0o)#5u2yhgq=l1xhb@xwhax+%yin=hlnzkt!z1^no*))8mn!q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') # env('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -93,14 +93,25 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('PQ_NAME'),
+#         'USER': env('PQ_USER'),
+#         'PASSWORD': env('PQ_PASSWORD'),
+#         'HOST': env('PQ_HOST'),
+#         'PORT':env('PQ_PORT')
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': env('DB_ENGINE'),
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT':env('DB_PORT')
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('PQ_NAME'),
+        'USER': os.getenv('PQ_USER'),
+        'PASSWORD': os.getenv('PQ_PASSWORD'),
+        'HOST': os.getenv('PQ_HOST'),
+        'PORT':os.getenv('PQ_PORT')
     }
 }
 
