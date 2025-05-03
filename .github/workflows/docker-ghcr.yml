@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.GHCR_PAT }}
 
       - name: Build Docker Images
-        run: docker compose -f docker-compose.yml build
+        run: docker compose -f docker-compose.yml build --build-arg IMAGE_TAG=${{ secrets.IMAGE_TAG }}
 
       - name: Push Docker Images
         run: docker compose -f docker-compose.yml push
