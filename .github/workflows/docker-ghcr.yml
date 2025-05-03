@@ -1,4 +1,4 @@
-name: Build, Push and Deploy with Docker Compose
+name: Build and Push to GHCR
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     permissions:
@@ -28,8 +28,7 @@ jobs:
           password: ${{ secrets.GHCR_PAT }}
 
       - name: Build Docker Images
-        run: docker-compose -f docker-compose.yml build
+        run: docker compose -f docker-compose.yml build
 
       - name: Push Docker Images
-        run: |
-          docker-compose -f docker-compose.yml push
+        run: docker compose -f docker-compose.yml push
