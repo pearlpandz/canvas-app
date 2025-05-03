@@ -1,11 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
-const frameRouter = require('./router/frame');
+const cors = require("cors");
+const frameRouter = require("./router/frame");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const mongoURI = 'mongodb://user:pass@localhost:27017/mydgcards';
+const mongoURI = "mongodb://user:pass@localhost:27017/mydgcards";
+
+// Enable CORS for specific origins:
+app.use(
+  cors({
+    origin: ["http://localhost:80", "http://localhost:8000", "creavo.in"],
+    credentials: true, // if using cookies or Authorization headers
+  })
+);
 
 // Middleware to parse JSON bodies
 app.use(express.json());  // Parses JSON data
