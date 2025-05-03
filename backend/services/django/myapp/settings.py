@@ -47,7 +47,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',') # env('ALLOWED_HOSTS').split(',')
 
-CORS_ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'localhost:80').split(',') # env('ALLOWED_ORIGINS').split(',')
+CORS_ALLOWED_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
