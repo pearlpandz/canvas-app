@@ -29,7 +29,7 @@ const HomePage = () => {
 
     return (
         <div style={{ padding: 20 }}>
-            <MediaContainer data={data?.media.find(a=> a.category === 'Welcome April')} handleSelectedImg={handleSelectedImg} />
+            <MediaContainer data={data?.media.find(a=> a.category === 'Festival')} handleSelectedImg={handleSelectedImg} />
 
             <EventList data={data?.events} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
 

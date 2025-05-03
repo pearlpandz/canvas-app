@@ -2,7 +2,7 @@ import MediaList from './MediaList';
 import './MediaContainer.css';
 import { useMemo } from 'react';
 
-const MediaContainer = ({ data, title='Trending' }) => { 
+const MediaContainer = ({ data, title='Trending', handleSelectedImg }) => { 
 
     const mediaList = useMemo(() => {
         if(data?.subcategories?.length > 0) {
@@ -46,7 +46,7 @@ const MediaContainer = ({ data, title='Trending' }) => {
                 )
             }
             <div className="trending">
-                <MediaList data={mediaList} />
+                <MediaList data={mediaList} handleSelectedImg={handleSelectedImg} />
             </div>
         </div>
     )

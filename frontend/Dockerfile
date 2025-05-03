@@ -1,8 +1,14 @@
 # Step 1: Build the React app
-FROM node:slim as builder
+FROM node:slim AS builder
 WORKDIR /app
+
+# Copy only package.json and package-lock.json first to leverage Docker cache
 COPY package*.json ./
-RUN npm install
+RUN npm config set registry https://registry.npmjs.org/ 
+RUN npm config set strict-ssl false
+RUN npm ci --verbose
+
+# Copy the rest of the application files
 COPY . .
 RUN npm run build
 
