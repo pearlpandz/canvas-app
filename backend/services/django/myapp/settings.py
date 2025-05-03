@@ -28,8 +28,11 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "frontend", "build"),
+    # os.path.join(BASE_DIR, "frontend", "build"),
 ]
+
+# If using a production setup, make sure to collect the static files:
+STATIC_ROOT = BASE_DIR / "staticfiles"  # This is for production
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
