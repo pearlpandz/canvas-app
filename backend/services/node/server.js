@@ -11,7 +11,17 @@ const mongoURI =
 // Enable CORS for specific origins:
 app.use(
   cors({
-    origin: ["http://localhost:80", "http://localhost:8000", "creavo.in"],
+    origin: function (origin, callback) {
+      if (
+        !origin ||
+        origin.startsWith("http://localhost") ||
+        origin.includes("creavo.in")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true, // if using cookies or Authorization headers
   })
 );
