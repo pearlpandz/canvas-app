@@ -5,7 +5,8 @@ const frameRouter = require("./router/frame");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const mongoURI = "mongodb://user:pass@localhost:27017/mydgcards";
+const mongoURI =
+  "mongodb+srv://pearlpandzz:5N5IxDzgZwv879hb@cluster0.awatipo.mongodb.net/creavo";
 
 // Enable CORS for specific origins:
 app.use(
