@@ -35,7 +35,7 @@ const HomePage = () => {
 
             {
                 data?.media?.map((item) => (
-                    <MediaContainer key={item.category} title={item.category} data={item} />
+                    <MediaContainer key={item.category} title={item.category} data={item} handleSelectedImg={handleSelectedImg} />
                 ))
             }
 
