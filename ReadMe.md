@@ -44,3 +44,14 @@ Stacks
 > Architecture: (Backend: Microservices, Frontend: monolith)
 > Deployment: Github Actions -> Docker Container -> EC2
 > Media storage: S3 bucket
+
+
+Current Activity
+-----------------
+Github Action - Workflow setup to create automated docker image to use in any server - completed
+
+Media Storage - This should be separate storage and should be accessible outside with firewall restriction (based on server availability)
+
+docker image build and publish to GHCR - completed
+
+docker container run from GHCR - yet to start (based on server availability)
