@@ -5,12 +5,23 @@ const frameRouter = require("./router/frame");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const mongoURI = "mongodb://user:pass@localhost:27017/mydgcards";
+const mongoURI =
+  "mongodb+srv://pearlpandzz:5N5IxDzgZwv879hb@cluster0.awatipo.mongodb.net/creavo";
 
 // Enable CORS for specific origins:
 app.use(
   cors({
-    origin: ["http://localhost:80", "http://localhost:8000", "creavo.in"],
+    origin: function (origin, callback) {
+      if (
+        !origin ||
+        origin.startsWith("http://localhost") ||
+        origin.includes("creavo.in")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true, // if using cookies or Authorization headers
   })
 );
