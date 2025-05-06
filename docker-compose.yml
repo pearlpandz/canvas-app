@@ -12,45 +12,15 @@ services:
   django:
     image: ghcr.io/pearlpandz/creavo/django
     build: ./backend/services/django
-    command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
+    command: /app/entrypoint.sh
     volumes:
       - ./backend/services/django:/app
     ports:
       - "8000:8000"
-    depends_on:
-      - postgres
 
   node:
     image: ghcr.io/pearlpandz/creavo/node
     build: ./backend/services/node
     ports:
       - "4000:4000"
-    depends_on:
-      - mongo
 
-  postgres:
-    image: ghcr.io/pearlpandz/creavo/postgres:14
-    restart: always
-    environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  mongo:
-    image: ghcr.io/pearlpandz/creavo/mongo
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: user
-      MONGO_INITDB_ROOT_PASSWORD: pass
-    volumes:
-      - mongodata:/data/db
-
-# Define the volume outside the service section
-volumes:
-  pgdata: {}  # Define the postgres volume here
-  mongodata: {}  # Define the mongo volume here
