@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+echo "Showing migrations..."
+python manage.py showmigrations
+
+echo "Making migrations for all apps..."
+python manage.py makemigrations --noinput
+
 echo "Applying database migrations..."
 python manage.py migrate --noinput
 
