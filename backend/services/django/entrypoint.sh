@@ -21,5 +21,14 @@ END
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
+echo "Showing migrations for api..."
+python manage.py showmigrations api
+
+echo "Making migrations for api..."
+python manage.py makemigrations api
+
+echo "Applying api migrations..."
+python manage.py migrate api
+
 echo "Starting Gunicorn..."
 exec gunicorn myapp.wsgi:application --bind 0.0.0.0:8000
