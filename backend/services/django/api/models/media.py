@@ -33,7 +33,7 @@ class Media(models.Model):
                 self.delete_local_file()
                 if old_image:
                     filename = old_image.split('/')[-1]
-                    delete_url = f"{settings.MEDIA_SERVER_URL}/delete/{filename}"
+                    delete_url = f"{settings.MEDIA_SERVER_URL}/delete/media/{filename}"
                     requests.delete(delete_url)
                 
         super().save(*args, **kwargs)
@@ -43,7 +43,7 @@ class Media(models.Model):
         if self.image:
             print("Extract the filename from the URL")
             filename = self.image.split('/')[-1]  # Get the file name from URL (e.g., '1746536961063.webp')
-            delete_url = f'{settings.MEDIA_SERVER_URL}/delete/{filename}'  # Adjust the URL as per your Node server
+            delete_url = f'{settings.MEDIA_SERVER_URL}/delete/media/{filename}'  # Adjust the URL as per your Node server
 
             try:
                 print("Send DELETE request to Node.js server to delete the file")
@@ -61,7 +61,7 @@ class Media(models.Model):
         """
         Send the image to Node.js server for storage and get back the file URL.
         """
-        url = 'http://localhost:4001/upload'  # Node.js server URL
+        url = f'{settings.MEDIA_SERVER_URL}/upload/media'  # Node.js server URL
         files = {'media': open(self.media.path, 'rb')}
         
         try:
