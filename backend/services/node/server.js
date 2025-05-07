@@ -1,12 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
+require("dotenv").config();
 const frameRouter = require("./router/frame");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const mongoURI =
-  "mongodb+srv://pearlpandzz:5N5IxDzgZwv879hb@cluster0.awatipo.mongodb.net/creavo";
+const mongoURI = process.env.DB_URL;
 
 // Enable CORS for specific origins:
 app.use(
