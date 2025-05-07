@@ -32,7 +32,7 @@ router.post("/create", upload.single("frame"), async (req, res) => {
 
     // Forward the file to Media Server (Server 2)
     const response = await axios.post(
-      "http://localhost:4001/upload/frame",
+      `${process.env.MEDIA_SERVER_URL}/upload/frame`,
       form,
       { headers: form.getHeaders() }
     );
@@ -93,26 +93,28 @@ router.patch("/update/:id", upload.single("frame"), async (req, res) => {
     const frameId = req.params.id;
     let updateData = req.body;
     const filePath = req.file.path;
+    console.log("File path:", filePath);
+    console.log("File:", req.file);
 
     if (filePath) {
       const form = new FormData();
       form.append("frame", fs.createReadStream(filePath)); // Forward file as stream
-
+      console.log("url", `${process.env.MEDIA_SERVER_URL}/upload/frame`);
       // Forward the file to Media Server (Server 2)
       const response = await axios.post(
-        "http://localhost:4001/upload/frame",
+        `${process.env.MEDIA_SERVER_URL}/upload/frame`,
         form,
         { headers: form.getHeaders() }
       );
 
       fs.unlinkSync(filePath);
+      console.log("Response:", response.data);
 
       await Frame.findById(frameId).then(async (frame) => {
-        console.log("Frame:", frame);
         if (frame.image) {
           const oldImageName = frame.image.split("/").pop(); // Extract filename from URL
           await axios.delete(
-            `http://localhost:4001/upload/delete/frames/${oldImageName}`,
+            `${process.env.MEDIA_SERVER_URL}/upload/delete/frames/${oldImageName}`,
             { headers: form.getHeaders() }
           );
         }
