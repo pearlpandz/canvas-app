@@ -61,11 +61,13 @@ class Media(models.Model):
         """
         Send the image to Node.js server for storage and get back the file URL.
         """
+        print("settings.MEDIA_SERVER_URL", settings.MEDIA_SERVER_URL);
         url = f'{settings.MEDIA_SERVER_URL}/upload/media'  # Node.js server URL
         files = {'media': open(self.media.path, 'rb')}
         
         try:
             response = requests.post(url, files=files)
+            print('response.status_code', response.status_code)
             if response.status_code == 200:
                 # Assume Node.js returns the file URL in the response
                 return response.json().get('url')
