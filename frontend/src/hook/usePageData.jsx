@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
 const fetchEvents = async (param) => {
-    const res = await fetch(`http://localhost:8000/api/events/${param}/`);
+    const res = await fetch(`http://156.238.16.139:8000/api/events/${param}/`);
     return res.json();
 };
 
 const fetchMedia = async () => {
-    const res = await fetch('http://localhost:8000/api/media/grouped/');
+    const res = await fetch('http://156.238.16.139:8000/api/media/grouped/');
     return res.json();
 };
 

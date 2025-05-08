@@ -53,6 +53,19 @@ class EventMediaInline(admin.StackedInline):
     model = EventMedia
     extra = 0
 
+    def image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="60" height="60" style="object-fit:cover;border-radius:4px;" />', obj.image)
+        return "-"
+    
+    image_tag.short_description = 'Image'
+
+    def delete_queryset(self, request, queryset):
+        print("Call delete() on each object to trigger Node.js cleanup")
+        for obj in queryset:
+            print(obj)
+            obj.delete()
+
 @admin.register(Event)
 class EventAdminConfig(admin.ModelAdmin):
     exclude = []
