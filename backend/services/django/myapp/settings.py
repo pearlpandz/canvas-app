@@ -166,3 +166,7 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_SERVER_URL = os.getenv('MEDIA_SERVER_URL', 'http://localhost:4001/upload')
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.creavo.in"
+]
