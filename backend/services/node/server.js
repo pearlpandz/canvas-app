@@ -1,16 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
+require("dotenv").config();
 const frameRouter = require("./router/frame");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const mongoURI = "mongodb://user:pass@localhost:27017/mydgcards";
+const mongoURI = process.env.DB_URL;
 
 // Enable CORS for specific origins:
 app.use(
   cors({
-    origin: ["http://localhost:80", "http://localhost:8000", "creavo.in"],
+    origin: function (origin, callback) {
+      if (
+        !origin ||
+        origin.startsWith("http://localhost") ||
+        origin.includes("creavo.in")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true, // if using cookies or Authorization headers
   })
 );
@@ -46,6 +57,9 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true, authSource: 'admin' })
-    .then(() => console.log('MongoDB connected successfully'))
-    .catch(err => console.error('MongoDB connection error:', err));
+console.log("mongoURI", mongoURI);
+
+mongoose
+  .connect(mongoURI)
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.error("MongoDB connection error:", err));

@@ -408,7 +408,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     const file = dataURLtoFile(dataURL, `${templateName}.png`);
     const formdata = new FormData();
     formdata.append('name', templateName);
-    formdata.append('image', file);
+    formdata.append('frame', file);
     formdata.append('elements', JSON.stringify(elements?.filter(a => Object.keys(a).length > 0)));
     formdata.append('category', templateCategory);
     mutate({ payload: formdata })
@@ -422,7 +422,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
     const file = dataURLtoFile(dataURL, `${templateName}.png`);
     const formdata = new FormData();
     formdata.append('name', templateName);
-    formdata.append('image', file);
+    formdata.append('frame', file);
     formdata.append('elements', JSON.stringify(elements));
     formdata.append('category', templateCategory);
     mutate({ payload: formdata, id: template._id })
