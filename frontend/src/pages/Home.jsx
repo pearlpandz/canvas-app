@@ -29,13 +29,13 @@ const HomePage = () => {
 
     return (
         <div style={{ padding: 20 }}>
-            <MediaContainer data={data?.media.find(a=> a.category === 'Festival')} handleSelectedImg={handleSelectedImg} />
+            <MediaContainer data={data?.media.find(a => a.category?.toLowerCase() === 'trending')} handleSelectedImg={handleSelectedImg} />
 
             <EventList data={data?.events} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
 
             {
-                data?.media?.map((item) => (
-                    <MediaContainer key={item.category} title={item.category} data={item} />
+                data?.media?.filter(a => a.category?.toLowerCase() !== 'trending')?.map((item) => (
+                    <MediaContainer key={item.category} title={item.category} data={item} handleSelectedImg={handleSelectedImg} />
                 ))
             }
 
