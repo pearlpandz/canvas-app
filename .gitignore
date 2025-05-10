@@ -9,6 +9,7 @@ lerna-debug.log*
 
 **/node_modules/
 **/dist
+!backend/services/django/react/dist
 dist-ssr
 *.local
 
@@ -27,3 +28,4 @@ backend/services/node/uploads/**
 **/migrations/**
 backend/services/django/uploads/**
 .secrets
+
