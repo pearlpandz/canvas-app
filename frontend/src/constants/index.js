@@ -12,5 +12,6 @@ export const SIDEBAR = [{
 }]
 
 export const SETTINGS = {
-  api_endpoint: "http://156.238.16.139:4000",
+  DJANGO_URL: "https://admin.creavo.in",
+  FRAME_SERVICE_URL: "https://frame-service.creavo.in",
 };

@@ -9,7 +9,7 @@ import { SETTINGS } from '../constants'
 const queryClient = new QueryClient()
 
 const fetchTemplates = async () => {
-    const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/list`, {
+    const response = await fetch(`${SETTINGS.FRAME_SERVICE_URL}/api/frame/list`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export const useTemplateById = (templateId) => {
     const { data: template, isLoading } = useQuery({
         queryKey: ['template', templateId],
         queryFn: async () => {
-            const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/${templateId}`, {
+            const response = await fetch(`${SETTINGS.FRAME_SERVICE_URL}/api/frame/${templateId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const useTemplateById = (templateId) => {
 }
 
 const patchTemplate = async ({payload, id}) => {
-    const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/update/${id}`, {
+    const response = await fetch(`${SETTINGS.FRAME_SERVICE_URL}/api/frame/update/${id}`, {
         method: 'PATCH',
         body: payload,
       });
@@ -84,7 +84,7 @@ export const usePatchTemplate = () => {
 }
 
 const createTemplate = async ({payload}) => {
-    const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/create`, {
+    const response = await fetch(`${SETTINGS.FRAME_SERVICE_URL}/api/frame/create`, {
         method: 'POST',
         body: payload,
       });
