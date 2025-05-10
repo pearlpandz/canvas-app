@@ -12,5 +12,5 @@ export const SIDEBAR = [{
 }]
 
 export const SETTINGS = {
-    api_endpoint: 'http://localhost:4000',
-}
+  api_endpoint: "https://frame-service.creavo.in",
+};
