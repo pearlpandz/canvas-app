@@ -36,7 +36,7 @@ class MediaViewSet(ViewSet):
                     {
                         "id": item.id,
                         "title": item.title,
-                        "image": f"{request.scheme}://{request.get_host()}/uploads/{item.media}"
+                        "image": item.image
                     }
                     for item in media_items
                 ]
@@ -55,7 +55,7 @@ class MediaViewSet(ViewSet):
                         {
                             "id": item.id,
                             "title": item.title,
-                            "image": f"{request.scheme}://{request.get_host()}/uploads/{item.media}"
+                            "image": item.image
 
                         }
                         for item in media_items 
