@@ -57,6 +57,9 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true, authSource: 'admin' })
-    .then(() => console.log('MongoDB connected successfully'))
-    .catch(err => console.error('MongoDB connection error:', err));
+console.log("mongoURI", mongoURI);
+
+mongoose
+  .connect(mongoURI)
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.error("MongoDB connection error:", err));

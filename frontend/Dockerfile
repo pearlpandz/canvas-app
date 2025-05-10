@@ -1,21 +1,26 @@
-# Step 1: Build the React app
-FROM node:slim AS builder
+# Base image
+FROM node:18-alpine
+
+# Set working directory
 WORKDIR /app
 
-# Copy only package.json and package-lock.json first to leverage Docker cache
+# Copy package.json and package-lock.json
 COPY package*.json ./
-RUN npm config set registry https://registry.npmjs.org/ 
-RUN npm config set strict-ssl false
-RUN npm ci --verbose
 
-# Copy the rest of the application files
+# Install dependencies
+RUN npm install
+
+# Copy rest of the app
 COPY . .
+
+# Build the React app
 RUN npm run build
 
-# Step 2: Serve with nginx
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-# Replace default nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Install 'serve' to serve the build folder
+RUN npm install -g serve
+
+# Expose port 3000
+EXPOSE 3000
+
+# Start the app
+CMD ["serve", "-s", "dist", "-l", "3000"]
