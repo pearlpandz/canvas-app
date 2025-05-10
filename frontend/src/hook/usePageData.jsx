@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
+import { SETTINGS } from '../constants';
 
 const fetchEvents = async (param) => {
-    const res = await fetch(`http://156.238.16.139:8000/api/events/${param}/`);
+    const res = await fetch(`${SETTINGS.DJANGO_URL}/api/events/${param}/`);
     return res.json();
 };
 
 const fetchMedia = async () => {
-    const res = await fetch('http://156.238.16.139:8000/api/media/grouped/');
+    const res = await fetch(`${SETTINGS.DJANGO_URL}/api/media/grouped/`);
     return res.json();
 };
 
