@@ -248,7 +248,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
       {
         id: `image-${Date.now()}`,
         type: "image",
-        src: "https://beautyrepublicfdl.com/wp-content/uploads/2020/06/placeholder-image.jpg",
+        src: "https://frame-service.creavo.in/uploads/placeholder-image.jpg",
         x: 100,
         y: 100,
         width: 150,
@@ -387,7 +387,7 @@ const CanvasEditor = ({ template, mode = 'edit' }) => {
       y: 100,
       width: 200,
       height: 200,
-      src: "https://beautyrepublicfdl.com/wp-content/uploads/2020/06/placeholder-image.jpg",
+      src: "https://frame-service.creavo.in/uploads/placeholder-image.jpg",
       radius: 0,
       opacity: 100,
       type: 'clip-image',

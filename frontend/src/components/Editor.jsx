@@ -13,7 +13,7 @@ function Editor(props) {
 
     const getTemplates = async () => {
         try {
-            const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/list`, {
+            const response = await fetch(`${SETTINGS.FRAME_SERVICE_URL}/api/frame/list`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ function Editor(props) {
                             templates.filter(template => template.category === 'regular').length > 0 ?
                                 templates.filter(template => template.category === 'regular').map((template, index) => (
                                     <button title={template.name} onClick={() => setSelectedTemplate(template)} key={index}>
-                                        <img src={SETTINGS.api_endpoint + '/' + template.image} alt={template.name} />
+                                        <img src={template.image} alt={template.name} />
                                     </button>
                                 )) :
                             <p>No Frames found.</p>
