@@ -11,9 +11,25 @@ const distDir = path.join(__dirname, 'dist');
 const djangoTemplatesDir = path.join(__dirname, '..', 'templates');
 const djangoStaticDir = path.join(__dirname, '..', 'static');
 
-// Clean templates and static
-console.log('🧹 Cleaning templates and static folders...');
-fs.emptyDirSync(djangoTemplatesDir);
+// Helper: Clean a directory except specified subfolder(s)
+function cleanDirExcept(dirPath, exceptions = []) {
+  const entries = fs.readdirSync(dirPath);
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry);
+    const isException = exceptions.some((ex) => fullPath.startsWith(path.join(dirPath, ex)));
+
+    if (!isException) {
+      fs.removeSync(fullPath); // delete file or directory
+    }
+  }
+}
+
+// Clean templates except 'admin'
+console.log('🧹 Cleaning templates (except templates/admin)...');
+cleanDirExcept(djangoTemplatesDir, ['admin']);
+
+// Clean static normally
+console.log('🧹 Cleaning static folder...');
 fs.emptyDirSync(djangoStaticDir);
 
 // Read index.html content
