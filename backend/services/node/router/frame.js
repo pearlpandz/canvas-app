@@ -88,7 +88,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // PATCH method to update frame in DB
-router.patch("/update/:id", upload.single("frame"), async (req, res) => {
+router.patch("/:id", upload.single("frame"), async (req, res) => {
   try {
     const frameId = req.params.id;
     let updateData = req.body;
@@ -142,6 +142,34 @@ router.patch("/update/:id", upload.single("frame"), async (req, res) => {
     res
       .status(500)
       .json({ message: "Error updating frame", error: error.message });
+  }
+});
+
+// DELETE method to delete frame in DB
+router.delete("/:id", async (req, res) => {
+  try {
+    const frameId = req.params.id;
+
+    // Find the frame to delete
+    const frame = await Frame.findById(frameId);
+    if (!frame) {
+      return res.status(404).json({ message: "Frame not found" });
+    }
+
+    // Delete the image from Media Server (Server 2)
+    const imageName = frame.image.split("/").pop(); // Extract filename from URL
+    await axios.delete(
+      `${process.env.MEDIA_SERVER_URL}/upload/delete/frames/${imageName}`,
+      { headers: { Authorization: req.headers.authorization } }
+    );
+
+    // Delete the frame from the database
+    await Frame.findByIdAndDelete(frameId);
+    res.status(200).json({ message: "Frame deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting frame", error: error.message });
   }
 });
 

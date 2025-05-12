@@ -811,34 +811,6 @@ const CanvasEditor = ({ template, mode = "edit" }) => {
           </button>
         </div>
       )}
-
-      {/* <Modal show={show} title='Template Properties' onClose={() => setShow(false)}>
-        <div className="modal-form-container">
-          <div className="form-group">
-            <label>Replace selected Image</label>
-            <input type="file" onChange={handleImageChange} disabled={!selectedId} />
-          </div>
-          <div className="form-group">
-            <label>Template Name</label>
-            <input type="text" placeholder="Your template name..." value={templateName || template?.name} onChange={(e) => setTemplateName(e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label>Category</label>
-            <select name="category" id="category" value={templateCategory} onChange={handleCategoryChange}>
-              <option value="regular">Regular</option>
-              <option value="product">Product</option>
-              <option value="political">Political</option>
-            </select>
-          </div>
-          <div className="button-container">
-            {
-              mode === 'edit' ?
-                <button onClick={updateTemplate}>Update Template</button> :
-                <button onClick={saveTemplate}>Save Template</button>
-            }
-          </div>
-        </div>
-      </Modal> */}
     </>
   );
 };

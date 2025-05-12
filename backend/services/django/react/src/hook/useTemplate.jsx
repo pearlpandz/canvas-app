@@ -23,13 +23,14 @@ const fetchTemplates = async () => {
 }
 
 export const useTemplate = () => {
-    const { data: templates, isLoading } = useQuery({
+    const { data: templates, isLoading, refetch } = useQuery({
         queryKey: ['templates'],
         queryFn: fetchTemplates
     })
     return {
         templates,
         isLoading,
+        refetch,
     }
 }
 
@@ -58,7 +59,7 @@ export const useTemplateById = (templateId) => {
 }
 
 const patchTemplate = async ({payload, id}) => {
-    const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/update/${id}`, {
+    const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/${id}`, {
         method: 'PATCH',
         body: payload,
       });
