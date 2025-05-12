@@ -6,17 +6,36 @@ import { FiEdit } from "react-icons/fi";
 import { Tooltip } from 'react-tooltip';
 import { format } from 'date-fns';
 import './List.css'
+import { SETTINGS } from '../constants';
 
 function ListPage() {
-    const { templates, isLoading } = useTemplate()
+    const { templates, isLoading, refetch } = useTemplate()
     const navigate = useNavigate();
 
     const handleTemplateEdit = (templateId) => {
         navigate(`/edit/${templateId}`);
     }
 
-    const handleTemplateDelete = (templateId) => {
+    const handleTemplateDelete = async (templateId) => {
         console.log(`Delete template with ID: ${templateId}`);
+        try {
+            const response = await fetch(`${SETTINGS.api_endpoint}/api/frame/${templateId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                console.log('Template deleted successfully');
+                // Optionally, you can refresh the template list or show a success message
+                refetch();
+            } else {
+                console.error('Failed to delete template');
+            }
+        } catch (error) {
+            console.error('Error deleting template:', error);
+        }
     }
 
     const handleCreateTemplate = () => {

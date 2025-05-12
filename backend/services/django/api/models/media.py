@@ -7,7 +7,7 @@ from .subcategory import SubCategory
     
 class Media(models.Model):
     media = models.FileField(upload_to='', default=None)
-    image = models.URLField(blank=True, null=True)
+    image = models.URLField(max_length=200, null=True)
     media_type = models.CharField(max_length=50,default=None, choices=[('image', 'Image (png, jpg, webp, gif)'), ('video', 'Video')])
     title = models.CharField(max_length=100)
     categories = models.ManyToManyField(Category, related_name='media', blank=True)
