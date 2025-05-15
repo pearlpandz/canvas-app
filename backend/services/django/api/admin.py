@@ -30,7 +30,7 @@ class CategoryAdminConfig(admin.ModelAdmin):
     search_fields=['name']
     list_filter=['name']
     # actions=[make_inactive,make_active]
-    list_per_page = 10
+    list_per_page = 15
     sortable_by=['id','name']
     ordering = ['order', 'id']
     inlines = [SubCategoryInline]
@@ -48,6 +48,7 @@ class MediaAdminConfig(admin.ModelAdmin):
     list_display = ('image_tag', 'title',)
     filter_horizontal = ('categories', 'subcategories')  # Nice UI for multi-select
     exclude = ['image']  # hides the field from the form
+    list_per_page = 15
 
     def image_tag(self, obj):
         if obj.image:
@@ -87,7 +88,7 @@ class EventAdminConfig(admin.ModelAdmin):
     search_fields=['name']
     list_filter=['name']
     # actions=[make_inactive,make_active]
-    list_per_page = 10
+    list_per_page = 15
     sortable_by=['name', 'date']
     ordering = ['date']
     inlines = [EventMediaInline]

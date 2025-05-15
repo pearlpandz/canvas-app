@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "Showing migrations..."
-python manage.py showmigrations
-
 echo "Making migrations for all apps..."
 python manage.py makemigrations --noinput
 
@@ -21,14 +18,12 @@ END
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-echo "Showing migrations for api..."
-python manage.py showmigrations api
-
-echo "Making migrations for api..."
+echo "Making & Applying migrations for apps..."
 python manage.py makemigrations api
-
-echo "Applying api migrations..."
 python manage.py migrate api
+
+python manage.py makemigrations accounts
+python manage.py migrate accounts
 
 echo "Starting Gunicorn..."
 exec gunicorn myapp.wsgi:application --bind 0.0.0.0:8000

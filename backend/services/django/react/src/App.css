@@ -78,7 +78,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .layout .canvas-container {
@@ -87,6 +87,7 @@
     justify-content: center;
     display: flex;
     background: #e4e4e4;
+    overflow: auto;
 }
 
 .layout .form-container {
@@ -95,8 +96,7 @@
 }
 
 .navigation .nav-action {
-    position: absolute;
-    right: 15px;
+    margin-right: 20px;
     background: #3295ed;
     padding: 5px 15px;
     border-radius: 15px;
@@ -107,7 +107,27 @@
     text-transform: capitalize;
 }
 
-.navigation h4 {
+.navigation .go-back-action {
+    margin-right: 20px;
+    background: transparent;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 12px;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.go-back-action svg {
+    font-size: 16px;
+}
+
+.navigation .navigation h4 {
     font-weight: normal;
     font-size: 18px;
 }

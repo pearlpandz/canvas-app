@@ -67,7 +67,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'accounts.apps.AccountsConfig',
     'corsheaders',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -170,3 +172,7 @@ MEDIA_SERVER_URL = os.getenv('MEDIA_SERVER_URL', 'http://localhost:4001/upload')
 CSRF_TRUSTED_ORIGINS = [
     "https://*.creavo.in"
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}

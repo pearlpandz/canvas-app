@@ -5,6 +5,8 @@ import { AiOutlineDelete, AiOutlinePlus, AiOutlineEye } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import { Tooltip } from 'react-tooltip';
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
+
 import './List.css'
 import { SETTINGS } from '../constants';
 
@@ -28,13 +30,24 @@ function ListPage() {
 
             if (response.ok) {
                 console.log('Template deleted successfully');
-                // Optionally, you can refresh the template list or show a success message
+                toast.success('Template deleted successfully!', {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                });
                 refetch();
             } else {
                 console.error('Failed to delete template');
+                toast.error('Failed to delete template.', {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                });
             }
         } catch (error) {
             console.error('Error deleting template:', error);
+            toast.error('Error deleting template.', {
+                position: "bottom-right",
+                autoClose: 3000,
+            });
         }
     }
 
