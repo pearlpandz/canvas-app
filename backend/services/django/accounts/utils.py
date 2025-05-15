@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from django.contrib.auth.hashers import check_password
 
 def authenticate_user(request, user_model, user_type):
