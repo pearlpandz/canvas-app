@@ -10,7 +10,7 @@ class User(models.Model):
     mobile_number = models.CharField(max_length=15, unique=True)
     password = models.CharField(max_length=128)
     date_joined = models.DateTimeField(auto_now_add=True)
-    is_verified = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
     downloads = models.PositiveIntegerField(default=0) # overall downloads
     exceeded_downloads = models.PositiveIntegerField(default=0) # subscription day limit exceeded downloads
     no_subscription_downloads = models.PositiveIntegerField(default=0) # without subscription downloads
