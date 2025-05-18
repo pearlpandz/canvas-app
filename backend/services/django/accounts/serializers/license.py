@@ -15,7 +15,7 @@ class DistributorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Distributor
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'email', 'mobile_number', 'created_at']
 
     def get_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'email', 'mobile_number', 'date_joined', 'downloads', 'exceeded_downloads', 'no_subscription_downloads']
 
     def get_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"

@@ -16,6 +16,7 @@ class License(models.Model):
     issued_to_distributor = models.ForeignKey(Distributor, on_delete=models.SET_NULL, null=True, blank=True, related_name="licenses")
     issued_to_master_distributor = models.ForeignKey(MasterDistributor, on_delete=models.SET_NULL, null=True, blank=True, related_name="licenses")
     purchased_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="purchased_licenses")
+    purchased_at = models.DateTimeField(default=None, null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='available')
     created_at = models.DateTimeField(auto_now_add=True)
 
