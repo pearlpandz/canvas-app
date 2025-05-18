@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 import environ
 import os
@@ -67,7 +68,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'accounts.apps.AccountsConfig',
     'corsheaders',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -170,3 +173,17 @@ MEDIA_SERVER_URL = os.getenv('MEDIA_SERVER_URL', 'http://localhost:4001/upload')
 CSRF_TRUSTED_ORIGINS = [
     "https://*.creavo.in"
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),   # Access token expires in 30 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=31),  # Refresh token expires in 31 day
+    'ROTATE_REFRESH_TOKENS': True,                 # Rotate refresh tokens on use
+    'BLACKLIST_AFTER_ROTATION': True,              # Blacklist old refresh tokens after rotation
+    'ALGORITHM': 'HS256',                          # Algorithm used for signing
+    'SIGNING_KEY': SECRET_KEY,                     # Signing key (default is Django's SECRET_KEY)
+    'AUTH_HEADER_TYPES': ('Bearer',),              # Header type for tokens
+}

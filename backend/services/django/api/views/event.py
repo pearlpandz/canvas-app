@@ -1,18 +1,19 @@
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
-from rest_framework.reverse import reverse
+from rest_framework import viewsets
 from datetime import datetime
-
+from rest_framework.permissions import IsAuthenticated
+from api.serializers.event import EventSerializer
 from api.models.event import Event
+from drf_spectacular.utils import extend_schema # type: ignore
 
-class EventViewSet(ViewSet):
-    def list(self, request):
-        return Response({
-            'event_by_date': request.build_absolute_uri(reverse('event-event_by_date', kwargs={'date': '24-04-2025'}, request=request)),
-        })
-
+@extend_schema(tags=['Events'])
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
+    
     @action(detail=False, methods=['get'], url_path=r'(?P<date>\d{2}-\d{2}-\d{4})', url_name='event_by_date')
     def event_by_date(self, request, date):
         try:

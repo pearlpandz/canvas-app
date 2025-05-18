@@ -1,5 +1,5 @@
 import { Stage, Layer, Transformer } from "react-konva";
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, use } from "react";
 import { useUndoRedo } from "../hook/useUndoRedo";
 import CanvasImage from "./CanvasImage";
 import CanvasText from "./CanvasText";
@@ -31,6 +31,8 @@ import CanvasPolygon from "./CanvasPolygon";
 import CanvasWedge from "./CanvasWedge";
 import { v4 as uuidv4 } from "uuid";
 import MultiPointLine from "./CanvasMultiPointLine";
+import { toast } from "react-toastify";
+
 
 // Canvas Editor
 const CanvasEditor = ({ template, mode = "edit" }) => {
@@ -419,8 +421,9 @@ const CanvasEditor = ({ template, mode = "edit" }) => {
       JSON.stringify(elements?.filter((a) => Object.keys(a).length > 0))
     );
     formdata.append("category", templateCategory);
-    mutate({ payload: formdata });
-    alert("Template saved successfully!");
+    mutate({
+      payload: formdata
+    });
   };
 
   const updateTemplate = async () => {
@@ -433,8 +436,10 @@ const CanvasEditor = ({ template, mode = "edit" }) => {
     formdata.append("frame", file);
     formdata.append("elements", JSON.stringify(elements));
     formdata.append("category", templateCategory);
-    mutate({ payload: formdata, id: template._id });
-    alert("Template updated successfully!");
+    mutate({
+      payload: formdata,
+      id: template._id
+    });
   };
 
   const handleImageChange = (event) => {

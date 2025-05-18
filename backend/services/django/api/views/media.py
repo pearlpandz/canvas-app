@@ -1,19 +1,21 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
-from rest_framework.reverse import reverse
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 
 from api.models.category import Category
 from api.models.subcategory import SubCategory
 from api.models.media import Media
+from api.serializers.media import MediaSerializer
+from drf_spectacular.utils import extend_schema # type: ignore
 
-class MediaViewSet(ViewSet):
-    def list(self, request):
-        return Response({
-            'grouped': request.build_absolute_uri(reverse('media-grouped', request=request)),
-        })
+@extend_schema(tags=['Media'])
+class MediaViewSet(viewsets.ModelViewSet):
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['get'], url_path='grouped', url_name='grouped')
     def grouped(self, request):

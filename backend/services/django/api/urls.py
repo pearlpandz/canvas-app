@@ -1,8 +1,14 @@
-from django.urls import path
-from api.views.media import GroupedMediaAPIView
-from .views.event import EventListView, EventViewSet
+from rest_framework.routers import DefaultRouter
+from .views.event import EventViewSet
+from api.views.media import MediaViewSet
+from api.views.event import EventViewSet
+
+router = DefaultRouter()
+router.register(r'media', MediaViewSet, basename='media')
+router.register(r'events', EventViewSet, basename='event')
 
 urlpatterns = [
-     path('media/grouped', GroupedMediaAPIView.as_view(), name='grouped-media'),
-     path('events/<dd-mm-yyyy:date>/', EventListView.as_view(), name='event-list-by-date'),
+     
 ]
+
+urlpatterns += router.urls
