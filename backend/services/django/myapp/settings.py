@@ -48,14 +48,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',') # env('ALLOWED_HOSTS').split(',')
 
-# production setting need more test
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',  # or your frontend domain
-#     'https://yourfrontend.com',  # for production
-# ]
-
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
 
 # Application definition
 
@@ -170,8 +165,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_SERVER_URL = os.getenv('MEDIA_SERVER_URL', 'http://localhost:4001/upload')
 
+CSRF_COOKIE_HTTPONLY = False  # Make cookie readable from JS
+CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.creavo.in"
+    "https://*.creavo.in",
+    "http://localhost:5173"
 ]
 
 REST_FRAMEWORK = {

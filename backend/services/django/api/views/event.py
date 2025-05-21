@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from datetime import datetime
-from rest_framework.permissions import IsAuthenticated
+from accounts.permissions import IsAuthenticated
 from api.serializers.event import EventSerializer
 from api.models.event import Event
 from drf_spectacular.utils import extend_schema # type: ignore

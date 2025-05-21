@@ -26,6 +26,7 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='dashboard')
     def dashboard(self, request):
+        print("Dashboard view called")
         # Extract master distributor from access token in cookies using utility
         current_master_distributor = get_user_from_access_token(request, MasterDistributor)
 
@@ -44,7 +45,7 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
         year = now.year
 
         # Monthly stats for current year
-        purchased_per_month = [0]*12
+        unsold_per_month = [0]*12
         sold_per_month = [0]*12
 
         # Get all licenses for the current master distributor for the current year
@@ -52,13 +53,13 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
         for lic in licenses:
             if lic.created_at:
                 if lic.status == 'purchased' and lic.purchased_at:
-                    # If the license was purchased, we count it in the purchased_per_month
+                    # If the license was purchased, we count it in the sold_per_month
                     month = lic.purchased_at.month - 1
-                    purchased_per_month[month] += 1
-                else:
-                    # If the license was sold, we count it in the sold_per_month
-                    month = lic.created_at.month - 1
                     sold_per_month[month] += 1
+                else:
+                    # If the license was sold, we count it in the unsold_per_month
+                    month = lic.created_at.month - 1
+                    unsold_per_month[month] += 1
 
 
         # Serializers for recent records
@@ -75,7 +76,7 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
             'recent_users': user_data,
             'recent_purchased_licenses': license_data,
             'monthly_stats': {
-                'purchased': purchased_per_month,
+                'unsold': unsold_per_month,
                 'sold': sold_per_month
             }
         })
