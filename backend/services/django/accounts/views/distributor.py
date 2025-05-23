@@ -59,13 +59,13 @@ class DistributorViewSet(viewsets.ModelViewSet):
         for lic in licenses:
             if lic.created_at:
                 if lic.status == 'purchased' and lic.purchased_at:
-                    # If the license was purchased, we count it in the purchased_per_month
+                    # If the license was purchased from distributor, we count it in the sold_per_month
                     month = lic.purchased_at.month - 1
-                    purchased_per_month[month] += 1
-                else:
-                    # If the license was sold, we count it in the sold_per_month
-                    month = lic.created_at.month - 1
                     sold_per_month[month] += 1
+                else:
+                    # If the license was not sold, we count it in the purchased_per_month
+                    month = lic.created_at.month - 1
+                    purchased_per_month[month] += 1
 
 
         # Serializers for recent records

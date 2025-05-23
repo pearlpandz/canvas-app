@@ -63,7 +63,7 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
         year = now.year
 
         # Monthly stats for current year
-        unsold_per_month = [0]*12
+        purchased_per_month = [0]*12
         sold_per_month = [0]*12
 
         # Get all licenses for the current master distributor for the current year
@@ -77,7 +77,7 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
                 else:
                     # If the license was sold, we count it in the unsold_per_month
                     month = lic.created_at.month - 1
-                    unsold_per_month[month] += 1
+                    purchased_per_month[month] += 1
 
 
         # Serializers for recent records
@@ -94,7 +94,7 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
             'recent_users': user_data,
             'recent_purchased_licenses': license_data,
             'monthly_stats': {
-                'unsold': unsold_per_month,
+                'purchased': purchased_per_month,
                 'sold': sold_per_month
             }
         })
