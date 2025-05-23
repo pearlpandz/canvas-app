@@ -40,6 +40,7 @@ class IsAuthenticated(BasePermission):
 
         user = authenticate_and_get_user(request, MasterDistributor)
         if user is not None and isinstance(user, MasterDistributor):
+            print('authorized as master distributor')
             return True
         
         user = authenticate_and_get_user(request, User)

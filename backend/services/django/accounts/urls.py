@@ -1,5 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
+from .views.order import OrderViewSet
 from .views.master_distributor import MasterDistributorViewSet
 from .views.distributor import DistributorViewSet
 from .views.user import UserViewSet
@@ -12,6 +14,7 @@ router = DefaultRouter()
 router.register(r'master-distributors', MasterDistributorViewSet, basename='master-distributor')
 router.register(r'distributors', DistributorViewSet, basename='distributor')
 router.register(r'subscriptions', SubscriptionViewSet, basename='subscription')
+router.register(r'orders', OrderViewSet, basename='order') 
 router.register(r'licenses', LicenseViewSet, basename='license')
 router.register(r'users', UserViewSet, basename='user')
 

@@ -113,10 +113,9 @@
 /* Added styles for the preview image */
 .preview-image {
     display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed;
+        top: calc(50% - 300px);
+        left: calc(50% - 300px);
     max-width: 300px;
     max-height: 300px;
     border: 1px solid #ddd;

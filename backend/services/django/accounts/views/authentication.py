@@ -6,6 +6,8 @@ from ..models.user import User
 from ..models.distributor import Distributor
 from ..models.master_distributor import MasterDistributor
 from ..utils import authenticate_user
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import JsonResponse
 
 @extend_schema(request={
     'application/json': {
@@ -54,3 +56,8 @@ class MasterDistributorAuthenticationAPIView(APIView):
 
     def post(self, request):
         return authenticate_user(request, MasterDistributor, "Master Distributor")
+
+
+@ensure_csrf_cookie
+def get_csrf(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
