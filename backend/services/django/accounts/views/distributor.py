@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from ..models.license import License
 from ..models.user import User
 from ..serializers.license import LicenseSerializer, UserSerializer
+from ..serializers.user import UserSerializer as MainUserSerializer
 from ..utils import get_user_from_access_token
 from drf_spectacular.utils import extend_schema # type: ignore
 from ..models.distributor import Distributor
@@ -22,6 +23,14 @@ class DistributorViewSet(viewsets.ModelViewSet):
         verified_distributors = self.queryset.filter(is_verified=True)
         serializer = self.get_serializer(verified_distributors, many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='users')
+    def get_user_under_distributor(self, request):
+        # Extract master distributor from access token in cookies using utility
+        current_distributor = get_user_from_access_token(request, Distributor)
+        total_users = User.objects.filter(created_by_distributor=current_distributor).order_by('-date_joined')[:5]
+        user_data = MainUserSerializer(total_users, many=True).data
+        return Response(user_data)
 
     @action(detail=False, methods=['get'], url_path='dashboard')
     def dashboard(self, request):
@@ -32,7 +41,7 @@ class DistributorViewSet(viewsets.ModelViewSet):
         total_users = User.objects.filter(created_by_distributor=current_distributor).count()
         total_licenses = License.objects.filter(issued_to_distributor=current_distributor).count()
         active_licenses = License.objects.filter(issued_to_distributor=current_distributor, status='purchased').count()
-        available_licenses = License.objects.filter(issued_to_distributor=current_distributor, status='available').count()
+        available_licenses = License.objects.filter(issued_to_distributor=current_distributor, status='pending').count()
 
         # Recent records
         recent_users = User.objects.filter(created_by_distributor=current_distributor).order_by('-date_joined')[:5]
@@ -46,7 +55,7 @@ class DistributorViewSet(viewsets.ModelViewSet):
         sold_per_month = [0]*12
         
         # Get all licenses for the current master distributor for the current year
-        licenses = License.objects.filter(issued_to_master_distributor=current_distributor, created_at__year=year)
+        licenses = License.objects.filter(issued_to_distributor=current_distributor, created_at__year=year)
         for lic in licenses:
             if lic.created_at:
                 if lic.status == 'purchased' and lic.purchased_at:

@@ -18,7 +18,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(License)
 class LicenseAdmin(admin.ModelAdmin):
-    list_display = ('code', 'subscription', 'issued_to_distributor', 'issued_to_master_distributor', 'created_at')
+    list_display = ('code', 'subscription', 'issued_to_distributor', 'issued_to_master_distributor', 'created_at', 'status')
     search_fields = ('code',)
     list_filter = ('created_at', 'subscription')
 

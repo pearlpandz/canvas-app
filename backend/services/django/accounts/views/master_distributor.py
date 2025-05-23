@@ -11,6 +11,8 @@ from ..models.user import User
 from ..models.license import License
 from ..utils import get_user_from_access_token
 from ..serializers.license import LicenseSerializer, UserSerializer, DistributorSerializer
+from ..serializers.user import UserSerializer as MainUserSerializer
+from ..serializers.distributor import DistributorSerializer as MainDistributorSerializer
 
 @extend_schema(tags=['Master Distributor'])
 class MasterDistributorViewSet(viewsets.ModelViewSet):
@@ -23,6 +25,22 @@ class MasterDistributorViewSet(viewsets.ModelViewSet):
         verified_distributors = self.queryset.filter(is_verified=True)
         serializer = self.get_serializer(verified_distributors, many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='users')
+    def get_user_under_master_distributor(self, request):
+        # Extract master distributor from access token in cookies using utility
+        current_distributor = get_user_from_access_token(request, MasterDistributor)
+        total_users = User.objects.filter(created_by_master_distributor=current_distributor).order_by('-date_joined')[:5]
+        user_data = MainUserSerializer(total_users, many=True).data
+        return Response(user_data)
+    
+    @action(detail=False, methods=['get'], url_path='distributors')
+    def get_distributor_under_master(self, request):
+        # Extract master distributor from access token in cookies using utility
+        current_distributor = get_user_from_access_token(request, MasterDistributor)
+        total_users = Distributor.objects.filter(created_by=current_distributor).order_by('-created_at')[:5]
+        user_data = MainDistributorSerializer(total_users, many=True).data
+        return Response(user_data)
 
     @action(detail=False, methods=['get'], url_path='dashboard')
     def dashboard(self, request):
